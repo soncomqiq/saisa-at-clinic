@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Download, Flower2 } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Customer, Sale } from '../../domain/types';
 import { Modal } from '../../components/ui';
@@ -26,7 +26,9 @@ export function Receipt({
       ]);
       const canvas = await html2canvas(receipt.current!, {
         scale: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: getComputedStyle(document.documentElement)
+          .getPropertyValue('--surface')
+          .trim(),
         useCORS: true,
       });
       const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
@@ -48,10 +50,20 @@ export function Receipt({
     }
   }
   return (
-    <Modal title="ใบเสร็จรับเงิน" open onClose={onClose} wide>
+    <Modal
+      title="ใบเสร็จรับเงิน"
+      open
+      onClose={onClose}
+      wide
+      footer={
+        <button className="button" disabled={busy} onClick={() => void download()}>
+          <Download size={17} />
+          {busy ? 'กำลังสร้างเอกสาร' : 'ดาวน์โหลด PDF'}
+        </button>
+      }
+    >
       <div className="receipt" ref={receipt} data-testid="receipt">
         <div className="receipt-brand">
-          <Flower2 size={30} />
           <h2>คลินิกใสสะอาด</h2>
           <p>บิวตี้แอนด์สปา</p>
           <p className="small">ใบเสร็จรับเงิน</p>
@@ -81,7 +93,7 @@ export function Receipt({
                   {line.name}
                   {line.kind === 'course' && (
                     <p className="small muted">
-                      คอร์ส {line.sessions} ครั้ง · {line.months} เดือน
+                      คอร์ส {line.sessions} ครั้ง อายุ {line.months} เดือน
                     </p>
                   )}
                 </td>
@@ -97,15 +109,8 @@ export function Receipt({
         </div>
         <p className="small">ชำระโดย {paymentLabels[sale.payment]}</p>
         <div className="receipt-thanks">
-          <p>ขอบคุณที่ให้เราดูแลคุณ</p>
-          <p className="small muted">เอกสารตัวอย่าง · ไม่ใช่ใบกำกับภาษี</p>
+          <p className="small muted">เอกสารตัวอย่าง ไม่ใช่ใบกำกับภาษี</p>
         </div>
-      </div>
-      <div className="actions">
-        <button className="button" disabled={busy} onClick={() => void download()}>
-          <Download size={17} />
-          {busy ? 'กำลังสร้างเอกสาร' : 'ดาวน์โหลด PDF'}
-        </button>
       </div>
     </Modal>
   );

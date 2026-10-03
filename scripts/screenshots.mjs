@@ -144,6 +144,7 @@ try {
     await page.getByRole('button', { name: 'สินค้า', exact: true }).click();
     await page.locator('.sale-item').filter({ hasText: 'เจลล้างหน้าอ่อนโยน' }).click();
     await page.evaluate(() => scrollTo(0, 0));
+    if (mobile) await page.getByRole('button', { name: 'รายการขาย', exact: true }).click();
     if (mobile)
       await page
         .locator('.bill')

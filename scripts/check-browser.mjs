@@ -55,6 +55,7 @@ try {
     await page.locator('.sale-item').filter({ hasText: 'ดูแลผิวหน้าเติมน้ำ' }).click();
     await page.getByRole('button', { name: 'สินค้า', exact: true }).click();
     await page.locator('.sale-item').filter({ hasText: 'เจลล้างหน้าอ่อนโยน' }).click();
+    if (width === 390) await page.getByRole('button', { name: 'รายการขาย', exact: true }).click();
     await page.getByRole('button', { name: 'รับชำระเงิน', exact: true }).click();
     await page.getByTestId('receipt').waitFor();
     const pdfPromise = page.waitForEvent('download');

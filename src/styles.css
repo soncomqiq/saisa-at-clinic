@@ -1610,6 +1610,106 @@ a.list-row:hover {
 .profile-metadata .numeric {
   text-align: left;
 }
+.sales-mobile-mode {
+  display: none;
+}
+.sale-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: var(--border-hairline) solid var(--rule);
+}
+.sale-item {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-2);
+  min-height: 76px;
+}
+.sale-item-description {
+  min-width: 0;
+}
+.sale-item-description strong {
+  display: block;
+  font-size: var(--text-lead);
+  font-weight: var(--weight-lead);
+}
+.sale-item-description p {
+  font-size: var(--text-meta);
+  color: var(--ink-muted);
+}
+.sale-item-add {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-shrink: 0;
+}
+.bill-lines {
+  max-height: 350px;
+  overflow: auto;
+  scroll-padding: var(--space-2);
+}
+.bill .section-heading {
+  margin-bottom: var(--space-3);
+}
+.bill-line {
+  padding: var(--space-2) 0;
+}
+.bill-line-heading {
+  font-size: var(--text-body);
+}
+.bill-line-heading strong {
+  font-weight: var(--weight-lead);
+}
+.bill-line-bottom {
+  gap: var(--space-3);
+}
+.bill-line-bottom > .numeric {
+  font-size: var(--text-lead);
+}
+.receipt-customer-select {
+  max-width: 360px;
+  margin-bottom: var(--space-4);
+}
+.bill-total strong {
+  font-size: var(--text-section);
+}
+@media (max-width: 700px) {
+  .sales-mobile-mode {
+    display: flex;
+    margin-bottom: var(--space-4);
+  }
+  .bill-view-catalog .bill,
+  .bill-view-bill .sales-catalog {
+    display: none;
+  }
+  .sale-item-description strong {
+    font-size: var(--text-body);
+  }
+  .sale-item-add {
+    gap: var(--space-2);
+  }
+  .bill {
+    order: 0;
+  }
+  .bill-lines {
+    max-height: none;
+  }
+  .receipt-table th:nth-child(2),
+  .receipt-table td:nth-child(2) {
+    min-width: 44px;
+  }
+  .receipt-table th:last-child,
+  .receipt-table td:last-child {
+    min-width: 86px;
+  }
+}
+@media (min-width: 701px) {
+  .bill-lines {
+    max-height: 260px;
+  }
+}
 .daily-book {
   display: grid;
   grid-template-columns: var(--dashboard-tracks);

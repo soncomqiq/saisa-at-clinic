@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Search,
-  Plus,
-  Minus,
-  Trash2,
-  ReceiptText,
-  Download,
-  ShoppingBag,
-  Check,
-} from 'lucide-react';
+import { Search, Plus, Minus, Trash2, ReceiptText, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Payment, Sale, SaleLine } from '../../domain/types';
 import { useClinic } from '../../services/useClinic';
@@ -20,6 +11,7 @@ import { Receipt } from './Receipt';
 export function Sales() {
   const { data, error, refresh } = useClinic();
   const [tab, setTab] = useState('bill');
+  const [billView, setBillView] = useState('catalog');
   const [kind, setKind] = useState<SaleLine['kind']>('treatment');
   const [customerId, setCustomerId] = useState('c1');
   const [search, setSearch] = useState('');
@@ -104,7 +96,7 @@ export function Sales() {
   }
   return (
     <div data-ready={!historyLoading}>
-      <PageTitle title="ขายและใบเสร็จ" subtitle="บริการ คอร์ส และสินค้าหน้าร้าน ในใบเสร็จเดียว">
+      <PageTitle title="ขายและใบเสร็จ">
         <button className="button secondary" disabled={!history.length} onClick={exportHistory}>
           <Download size={17} />
           ส่งออก Excel
@@ -121,193 +113,216 @@ export function Sales() {
         </div>
       </div>
       {tab === 'bill' ? (
-        <div className="sales-layout">
-          <section className="sales-catalog">
-            <div className="toolbar">
-              <div className="search">
-                <Search size={17} />
-                <input
-                  aria-label="ค้นหารายการขาย"
-                  placeholder="ค้นหาบริการ หรือสินค้า..."
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
+        <>
+          <div className="segmented sales-mobile-mode">
+            <button
+              className={billView === 'catalog' ? 'active' : ''}
+              onClick={() => setBillView('catalog')}
+            >
+              เลือกรายการ
+            </button>
+            <button
+              aria-label="รายการขาย"
+              className={billView === 'bill' ? 'active' : ''}
+              onClick={() => setBillView('bill')}
+            >
+              รายการขาย ({lines.length})
+            </button>
+          </div>
+          <div className={'sales-layout bill-view-' + billView}>
+            <section className="sales-catalog">
+              <div className="toolbar">
+                <div className="search">
+                  <Search size={17} />
+                  <input
+                    aria-label="ค้นหารายการขาย"
+                    placeholder="ค้นหาบริการ หรือสินค้า..."
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="segmented sales-kind">
-              {[
-                ['treatment', 'บริการ'],
-                ['course', 'คอร์ส'],
-                ['product', 'สินค้า'],
-              ].map(([value, label]) => (
-                <button
-                  key={value}
-                  className={kind === value ? 'active' : ''}
-                  onClick={() => {
-                    setKind(value as SaleLine['kind']);
-                    setSearch('');
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            {catalog.length ? (
-              <div className="sale-items">
-                {catalog.map((item) => (
+              <div className="segmented sales-kind">
+                {[
+                  ['treatment', 'บริการ'],
+                  ['course', 'คอร์ส'],
+                  ['product', 'สินค้า'],
+                ].map(([value, label]) => (
                   <button
-                    className="sale-item"
-                    key={item.id}
-                    onClick={() => add(item.id, item.name, item.price || 0)}
+                    key={value}
+                    className={kind === value ? 'active' : ''}
+                    onClick={() => {
+                      setKind(value as SaleLine['kind']);
+                      setSearch('');
+                    }}
                   >
-                    <div className="sale-item-icon">
-                      {kind === 'product' ? <ShoppingBag size={20} /> : <ReceiptText size={20} />}
-                    </div>
-                    <strong>{item.name}</strong>
-                    <p className="small muted">
-                      {kind === 'course'
-                        ? '10 ครั้ง · อายุ 12 เดือน'
-                        : 'duration' in item
-                          ? item.duration + ' นาที'
-                          : 'คงเหลือ ' + item.stock + ' ' + item.unit}
-                    </p>
-                    <div>
-                      <span>
-                        {money(
-                          kind === 'course'
-                            ? Math.round((item.price || 0) * 10 * 0.85)
-                            : item.price,
-                        )}
-                      </span>
-                      <Plus size={17} />
-                    </div>
+                    {label}
                   </button>
                 ))}
               </div>
-            ) : (
-              <Empty text="ไม่พบรายการที่ค้นหา" />
-            )}
-          </section>
-          <section className="bill">
-            <div className="section-heading">
-              <h2>รายการขาย</h2>
-              <button
-                className="icon-button"
-                title="ล้างบิล"
-                disabled={!lines.length}
-                onClick={() => setClear(true)}
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
-            <label>
-              ลูกค้า
-              <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
-                {data.customers.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="bill-lines">
-              {lines.length ? (
-                lines.map((line, index) => (
-                  <div className="bill-line" key={line.kind + line.itemId}>
-                    <div className="bill-line-heading">
-                      <strong>{line.name}</strong>
-                      <button
-                        className="icon-button"
-                        title={'ลบ ' + line.name}
-                        onClick={() => setRemove(index)}
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                    <p className="small muted">
-                      {line.kind === 'course'
-                        ? 'คอร์ส 10 ครั้ง · 12 เดือน'
-                        : line.kind === 'product'
-                          ? 'สินค้า'
-                          : 'บริการ'}{' '}
-                      · {money(line.unitPrice)}
-                    </p>
-                    <div className="bill-line-bottom">
-                      <div className="quantity-stepper">
+              {catalog.length ? (
+                <div className="sale-items">
+                  {catalog.map((item) => (
+                    <button
+                      className="sale-item"
+                      aria-label={'เพิ่ม ' + item.name}
+                      key={item.id}
+                      onClick={() => add(item.id, item.name, item.price || 0)}
+                    >
+                      <div className="sale-item-description">
+                        <strong>{item.name}</strong>
+                        <p className="small muted">
+                          {kind === 'course'
+                            ? '10 ครั้ง อายุ 12 เดือน'
+                            : 'duration' in item
+                              ? item.duration + ' นาที'
+                              : 'คงเหลือ ' + item.stock + ' ' + item.unit}
+                        </p>
+                      </div>
+                      <div className="sale-item-add">
+                        <span className="numeric">
+                          {money(
+                            kind === 'course'
+                              ? Math.round((item.price || 0) * 10 * 0.85)
+                              : item.price,
+                          )}
+                        </span>
+                        <Plus size={17} />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <Empty text="ไม่พบรายการที่ตรงกับคำค้น" hint="ล้างคำค้นหรือเปลี่ยนประเภท">
+                  <button className="button secondary" onClick={() => setSearch('')}>
+                    ล้างคำค้น
+                  </button>
+                </Empty>
+              )}
+            </section>
+            <section className="bill">
+              <div className="section-heading">
+                <h2>
+                  รายการขาย <span className="small muted">{lines.length} รายการ</span>
+                </h2>
+                <button
+                  className="icon-button"
+                  title="ล้างรายการขาย"
+                  disabled={!lines.length}
+                  onClick={() => setClear(true)}
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+              <label>
+                ลูกค้า
+                <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
+                  {data.customers.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="bill-lines">
+                {lines.length ? (
+                  lines.map((line, index) => (
+                    <div className="bill-line" key={line.kind + line.itemId}>
+                      <div className="bill-line-heading">
+                        <strong>{line.name}</strong>
                         <button
                           className="icon-button"
-                          title="ลดจำนวน"
-                          disabled={line.quantity === 1}
-                          onClick={() =>
-                            setLines(
-                              lines.map((item, position) =>
-                                position === index
-                                  ? { ...item, quantity: item.quantity - 1 }
-                                  : item,
-                              ),
-                            )
-                          }
+                          title={'ลบ ' + line.name}
+                          onClick={() => setRemove(index)}
                         >
-                          <Minus size={14} />
-                        </button>
-                        <span>{line.quantity}</span>
-                        <button
-                          className="icon-button"
-                          title="เพิ่มจำนวน"
-                          onClick={() =>
-                            setLines(
-                              lines.map((item, position) =>
-                                position === index
-                                  ? { ...item, quantity: item.quantity + 1 }
-                                  : item,
-                              ),
-                            )
-                          }
-                        >
-                          <Plus size={14} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
-                      <strong>{money(line.unitPrice * line.quantity)}</strong>
+                      <p className="small muted">
+                        {line.kind === 'course'
+                          ? 'คอร์ส 10 ครั้ง อายุ 12 เดือน'
+                          : line.kind === 'product'
+                            ? 'สินค้า'
+                            : 'บริการ'}{' '}
+                        <br />
+                        ราคาต่อหน่วย {money(line.unitPrice)}
+                      </p>
+                      <div className="bill-line-bottom">
+                        <div className="quantity-stepper">
+                          <button
+                            className="icon-button"
+                            title="ลดจำนวน"
+                            disabled={line.quantity === 1}
+                            onClick={() =>
+                              setLines(
+                                lines.map((item, position) =>
+                                  position === index
+                                    ? { ...item, quantity: item.quantity - 1 }
+                                    : item,
+                                ),
+                              )
+                            }
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span>{line.quantity}</span>
+                          <button
+                            className="icon-button"
+                            title="เพิ่มจำนวน"
+                            onClick={() =>
+                              setLines(
+                                lines.map((item, position) =>
+                                  position === index
+                                    ? { ...item, quantity: item.quantity + 1 }
+                                    : item,
+                                ),
+                              )
+                            }
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        <strong className="numeric">{money(line.unitPrice * line.quantity)}</strong>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <Empty text="ยังไม่มีรายการในบิล" />
+                  ))
+                ) : (
+                  <Empty text="ยังไม่มีรายการขาย" hint="เพิ่มบริการ คอร์ส หรือสินค้า" />
+                )}
+              </div>
+              <div className="bill-total">
+                <span>ยอดรวมสุทธิ</span>
+                <strong>{money(total)}</strong>
+              </div>
+              <label>
+                วิธีชำระเงิน
+                <select
+                  value={payment}
+                  onChange={(event) => setPayment(event.target.value as Payment)}
+                >
+                  <option value="transfer">โอนเงิน</option>
+                  <option value="cash">เงินสด</option>
+                  <option value="card">บัตรเครดิต</option>
+                </select>
+              </label>
+              {warning && (
+                <p role="alert" className="error">
+                  {warning}
+                </p>
               )}
-            </div>
-            <div className="bill-total">
-              <span>ยอดรวมสุทธิ</span>
-              <strong>{money(total)}</strong>
-            </div>
-            <label>
-              วิธีชำระเงิน
-              <select
-                value={payment}
-                onChange={(event) => setPayment(event.target.value as Payment)}
+              <button
+                className="button checkout"
+                disabled={!lines.length || busy}
+                onClick={() => void checkout()}
               >
-                <option value="transfer">โอนเงิน</option>
-                <option value="cash">เงินสด</option>
-                <option value="card">บัตรเครดิต</option>
-              </select>
-            </label>
-            {warning && (
-              <p role="alert" className="error">
-                {warning}
-              </p>
-            )}
-            <button
-              className="button checkout"
-              disabled={!lines.length || busy}
-              onClick={() => void checkout()}
-            >
-              <Check size={18} />
-              {busy ? 'กำลังบันทึก' : 'รับชำระเงิน'}
-            </button>
-          </section>
-        </div>
+                {busy ? 'กำลังบันทึก' : 'รับชำระเงิน'}
+              </button>
+            </section>
+          </div>
+        </>
       ) : (
         <>
-          <label style={{ maxWidth: 350, marginBottom: 20 }}>
+          <label className="receipt-customer-select">
             ลูกค้า
             <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
               {data.customers.map((item) => (
@@ -328,11 +343,13 @@ export function Sales() {
                     <div>
                       <strong>ใบเสร็จ {sale.id.slice(0, 8).toUpperCase()}</strong>
                       <p>
-                        {thaiDate(sale.date, 'd MMM yyyy HH:mm')} · {sale.lines.length} รายการ
+                        {thaiDate(sale.date, 'd MMM yyyy HH:mm')}
+                        <br />
+                        {sale.lines.length} รายการ
                       </p>
                     </div>
                     <div className="actions">
-                      <strong>{money(sale.total)}</strong>
+                      <strong className="numeric">{money(sale.total)}</strong>
                       <button
                         className="icon-button"
                         title="ดูใบเสร็จ"
@@ -362,7 +379,7 @@ export function Sales() {
           setRemove(null);
           setClear(false);
         }}
-        title={clear ? 'ล้างรายการขายทั้งหมด' : 'ลบรายการขาย'}
+        title={clear ? 'ล้างรายการขาย' : 'ลบรายการ'}
         description="รายการที่เลือกจะถูกนำออกจากบิลที่ยังไม่ชำระเงิน"
         onConfirm={() => {
           if (clear) setLines([]);
