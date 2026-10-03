@@ -1,7 +1,7 @@
 # Clinic Workspace Design
 
-**Status: proposed, awaiting approval.** This document contains the screenshot
-audit and design plan only. Do not implement until the user approves it.
+**Status: approved on 2026-10-03; implementation in progress.** The user approved
+the plan. Preserve the audit below as the baseline and follow the per-page gates.
 
 ## 1. Intent and scope
 
