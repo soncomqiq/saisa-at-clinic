@@ -1710,6 +1710,48 @@ a.list-row:hover {
     max-height: 260px;
   }
 }
+.stock-exceptions {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-hairline) solid var(--rule);
+  color: var(--arrived-ink);
+}
+.stock-filter {
+  width: auto;
+  max-width: 100%;
+}
+.stock-tool {
+  width: auto;
+  min-width: var(--target-size);
+  padding: var(--space-2);
+  gap: var(--space-1);
+}
+.stock-tool span {
+  font-size: var(--text-meta);
+}
+.stock-quantities {
+  display: flex;
+  gap: var(--space-6);
+  margin: 0;
+  width: 100%;
+  justify-content: space-between;
+}
+.stock-quantities > div {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.stock-quantities dt {
+  color: var(--ink-muted);
+  font-size: var(--text-meta);
+}
+.stock-quantities dd {
+  margin: 0;
+}
+.stock-actions {
+  display: flex;
+  justify-content: flex-end;
+}
 .daily-book {
   display: grid;
   grid-template-columns: var(--dashboard-tracks);

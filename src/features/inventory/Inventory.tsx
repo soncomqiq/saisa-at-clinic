@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react';
-import { Search, Download, PackagePlus, PackageMinus, History, AlertTriangle } from 'lucide-react';
+import { useId, useState, type FormEvent } from 'react';
+import { Search, Download, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { toast } from 'sonner';
 import { useClinic } from '../../services/useClinic';
 import { getService } from '../../services';
@@ -8,6 +8,7 @@ import { Empty, Modal, PageTitle, Skeleton } from '../../components/ui';
 import { errorMessage, money, thaiDate } from '../../lib/format';
 import { exportExcel } from '../../lib/export';
 export function Inventory() {
+  const formId = useId();
   const { data, error, refresh } = useClinic();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
@@ -51,17 +52,27 @@ export function Inventory() {
   }
   const controls = (item: Product) => (
     <div className="actions">
-      <button className="icon-button" title={'รับเข้า ' + item.name} onClick={() => open(item, 1)}>
-        <PackagePlus size={18} />
+      <button
+        className="icon-button stock-tool"
+        title={'รับเข้าสินค้า ' + item.name}
+        onClick={() => open(item, 1)}
+      >
+        <ArrowDownToLine size={18} />
+        <span>รับเข้า</span>
       </button>
-      <button className="icon-button" title={'เบิกออก ' + item.name} onClick={() => open(item, -1)}>
-        <PackageMinus size={18} />
+      <button
+        className="icon-button stock-tool"
+        title={'เบิกออกสินค้า ' + item.name}
+        onClick={() => open(item, -1)}
+      >
+        <ArrowUpFromLine size={18} />
+        <span>เบิกออก</span>
       </button>
     </div>
   );
   return (
     <div data-ready="true">
-      <PageTitle title="สินค้าและสต็อก" subtitle="ติดตามสินค้าหน้าร้านและวัสดุที่ใช้ในการบริการ">
+      <PageTitle title="สินค้าและสต็อก">
         <button
           className="button secondary"
           onClick={() =>
@@ -82,23 +93,21 @@ export function Inventory() {
           ส่งออก Excel
         </button>
       </PageTitle>
-      <div className="warning-note actions">
-        <AlertTriangle size={18} />
+      <div className="stock-exceptions actions">
         <span>
-          มี {data.products.filter((item) => item.stock <= item.minimum).length}{' '}
-          รายการต่ำกว่าสต็อกขั้นต่ำ
+          สต็อกต่ำ {data.products.filter((item) => item.stock <= item.minimum).length} รายการ
         </span>
         <button className="link" onClick={() => setFilter('low')}>
-          ดูรายการ
+          ดูสต็อกต่ำ
         </button>
       </div>
-      <div className="toolbar section">
+      <div className="toolbar">
         <div className="segmented">
           <button className={tab === 'stock' ? 'active' : ''} onClick={() => setTab('stock')}>
             สินค้าคงเหลือ
           </button>
           <button className={tab === 'history' ? 'active' : ''} onClick={() => setTab('history')}>
-            <History size={14} /> ประวัติ
+            ประวัติการเคลื่อนไหว
           </button>
         </div>
       </div>
@@ -116,7 +125,7 @@ export function Inventory() {
             </div>
             <select
               aria-label="กรองสินค้า"
-              style={{ width: 'auto' }}
+              className="stock-filter"
               value={filter}
               onChange={(event) => setFilter(event.target.value)}
             >
@@ -135,8 +144,9 @@ export function Inventory() {
                     <tr>
                       <th>สินค้า</th>
                       <th>ประเภท</th>
-                      <th>ราคา</th>
-                      <th>คงเหลือ / ขั้นต่ำ</th>
+                      <th className="numeric">ราคา</th>
+                      <th className="numeric">คงเหลือ</th>
+                      <th className="numeric">ขั้นต่ำ</th>
                       <th>สถานะ</th>
                       <th>จัดการ</th>
                     </tr>
@@ -149,18 +159,21 @@ export function Inventory() {
                           <p className="small muted">{item.id.toUpperCase()}</p>
                         </td>
                         <td>{item.kind === 'retail' ? 'ขายปลีก' : 'วัสดุสิ้นเปลือง'}</td>
-                        <td>{money(item.price)}</td>
-                        <td>
-                          {item.stock} / {item.minimum} {item.unit}
+                        <td className="numeric">{money(item.price)}</td>
+                        <td className="numeric">
+                          <strong>{item.stock}</strong> {item.unit}
+                        </td>
+                        <td className="numeric">
+                          {item.minimum} {item.unit}
                         </td>
                         <td>
-                          <span
-                            className={
-                              'badge ' + (item.stock <= item.minimum ? 'low' : 'completed')
-                            }
-                          >
-                            {item.stock <= item.minimum ? 'สต็อกต่ำ' : 'พร้อมใช้งาน'}
-                          </span>
+                          {item.stock <= item.minimum ? (
+                            <span className={'badge ' + (item.stock === 0 ? 'cancelled' : 'low')}>
+                              {item.stock === 0 ? 'หมด' : 'สต็อกต่ำ'}
+                            </span>
+                          ) : (
+                            <span className="muted">พร้อมใช้งาน</span>
+                          )}
                         </td>
                         <td>{controls(item)}</td>
                       </tr>
@@ -176,23 +189,49 @@ export function Inventory() {
                       {item.stock <= item.minimum && <span className="badge low">สต็อกต่ำ</span>}
                     </div>
                     <div className="card-row-meta">
-                      <span>
-                        {item.kind === 'retail' ? 'ขายปลีก' : 'วัสดุสิ้นเปลือง'} ·{' '}
-                        {money(item.price)}
-                      </span>
+                      <span>{item.kind === 'retail' ? 'ขายปลีก' : 'วัสดุสิ้นเปลือง'}</span>
+                      <span className="numeric">{money(item.price)}</span>
                     </div>
                     <div className="card-row-head">
-                      <span className="small">
-                        คงเหลือ {item.stock} / ขั้นต่ำ {item.minimum}
-                      </span>
-                      {controls(item)}
+                      <dl className="stock-quantities">
+                        <div>
+                          <dt>คงเหลือ</dt>
+                          <dd className="numeric">
+                            <strong>{item.stock}</strong> {item.unit}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>ขั้นต่ำ</dt>
+                          <dd className="numeric">
+                            {item.minimum} {item.unit}
+                          </dd>
+                        </div>
+                      </dl>
                     </div>
+                    <div className="stock-actions">{controls(item)}</div>
                   </article>
                 ))}
               </div>
             </>
           ) : (
-            <Empty text="ไม่พบสินค้าที่ค้นหา" />
+            <Empty
+              text={
+                filter === 'low' && !search
+                  ? 'ไม่มีสินค้าที่ต่ำกว่าขั้นต่ำ'
+                  : 'ไม่พบสินค้าที่ตรงกับคำค้น'
+              }
+              hint="ล้างคำค้นหรือเปลี่ยนประเภทสินค้า"
+            >
+              <button
+                className="button secondary"
+                onClick={() => {
+                  setSearch('');
+                  setFilter('all');
+                }}
+              >
+                ดูสินค้าทั้งหมด
+              </button>
+            </Empty>
           )}
         </>
       ) : (
@@ -204,7 +243,9 @@ export function Inventory() {
                   {data.products.find((product) => product.id === item.productId)?.name}
                 </strong>
                 <p>
-                  {item.reason} · {thaiDate(item.date, 'd MMM HH:mm')}
+                  {item.reason}
+                  <br />
+                  {thaiDate(item.date, 'd MMM HH:mm')}
                 </p>
               </div>
               <span className={'badge ' + (item.quantity > 0 ? 'completed' : 'low')}>
@@ -219,11 +260,21 @@ export function Inventory() {
         title={direction > 0 ? 'รับเข้าสินค้า' : 'เบิกออกสินค้า'}
         open={!!product}
         onClose={() => setProduct(null)}
+        summary={
+          <>
+            <strong>{product?.name}</strong>
+            <span>
+              คงเหลือ {product?.stock} {product?.unit}
+            </span>
+          </>
+        }
+        footer={
+          <button className="button" type="submit" form={formId} disabled={busy}>
+            {busy ? 'กำลังบันทึก' : direction > 0 ? 'บันทึกรับเข้า' : 'บันทึกเบิกออก'}
+          </button>
+        }
       >
-        <form onSubmit={submit}>
-          <p>
-            {product?.name} <span className="muted">· คงเหลือ {product?.stock}</span>
-          </p>
+        <form id={formId} onSubmit={submit}>
           <label>
             จำนวน
             <input
@@ -249,9 +300,6 @@ export function Inventory() {
               {warning}
             </p>
           )}
-          <button className="button" disabled={busy}>
-            {busy ? 'กำลังบันทึก' : 'บันทึก'}
-          </button>
         </form>
       </Modal>
     </div>
