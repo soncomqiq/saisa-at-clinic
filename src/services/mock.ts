@@ -34,6 +34,7 @@ export class MockClinicService implements ClinicService {
     return session;
   }
   async logout() { this.storage.removeItem(SESSION_KEY); }
+  async customerSales(customerId:string) { await this.wait();await this.authorized(['owner','receptionist']);return this.read().sales.filter(item=>item.customerId===customerId); }
   async snapshot() {
     await this.wait(); const session=await this.authorized(['owner','receptionist','practitioner']);const data=this.read();
     if(session.role==='receptionist'){data.customers=data.customers.map(({precaution: _precaution,...customer})=>{void _precaution;return customer;});data.sales=[];data.products=data.products.filter(item=>item.kind==='retail');data.movements=[];}

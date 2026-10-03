@@ -5,6 +5,7 @@ export interface ClinicService {
   login(role: Role, staffId: string, email: string, password: string): Promise<Session>;
   logout(): Promise<void>;
   snapshot(): Promise<ClinicData>;
+  customerSales(customerId: string): Promise<Sale[]>;
   book(input: BookingInput, id?: string): Promise<Appointment>;
   transition(id: string, status: Status): Promise<void>;
   addCustomer(input: Pick<Customer,'name'|'phone'|'precaution'>): Promise<Customer>;

@@ -35,7 +35,9 @@ Session: role, staff id, display name. Money is integer satang internally.
 ## Services and persistence
 `ClinicService` supplies login/logout/session, a role-filtered snapshot, booking,
 rescheduling/editing, status transitions, course sale, checkout, customer creation,
-stock movements and reset. Components only call the service factory; they never
+stock movements, per-customer receipt lookup, and reset. Reception receives retail
+catalog items for billing and per-customer receipts, but no aggregate sales snapshot.
+Components only call the service factory; they never
 import seeds or read localStorage. Snapshot DTOs redact sensitive fields before
 returning them (prices/revenue/sales for practitioner; precautions for reception).
 Mutations authorize against the stored session, clone repository state, validate
