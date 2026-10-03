@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-10-03T05:54:53.805Z",
+  "desktop": {
+    "width": 1440,
+    "height": 900,
+    "scale": 1
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "scale": 2
+  },
+  "files": [
+    {
+      "name": "dashboard",
+      "title": "ภาพรวมคลินิก",
+      "role": "owner",
+      "desktop": "desktop/dashboard.png",
+      "mobile": "mobile/dashboard.png",
+      "gallery": "gallery/dashboard.png"
+    },
+    {
+      "name": "appointments-week",
+      "title": "ตารางนัดหมายรายสัปดาห์",
+      "role": "owner",
+      "desktop": "desktop/appointments-week.png",
+      "mobile": "mobile/appointments-week.png",
+      "gallery": "gallery/appointments-week.png"
+    },
+    {
+      "name": "appointments-day",
+      "title": "ตารางนัดหมายรายวัน",
+      "role": "owner",
+      "desktop": "desktop/appointments-day.png",
+      "mobile": "mobile/appointments-day.png",
+      "gallery": "gallery/appointments-day.png"
+    },
+    {
+      "name": "appointments-room",
+      "title": "ตารางห้องบริการ",
+      "role": "owner",
+      "desktop": "desktop/appointments-room.png",
+      "mobile": "mobile/appointments-room.png",
+      "gallery": "gallery/appointments-room.png"
+    },
+    {
+      "name": "booking-conflict",
+      "title": "คำเตือนเมื่อจองคิวซ้อน",
+      "role": "owner",
+      "desktop": "desktop/booking-conflict.png",
+      "mobile": "mobile/booking-conflict.png",
+      "gallery": "gallery/booking-conflict.png"
+    },
+    {
+      "name": "customer-active-courses",
+      "title": "ข้อมูลลูกค้าและคอร์สที่ใช้งานได้",
+      "role": "owner",
+      "desktop": "desktop/customer-active-courses.png",
+      "mobile": "mobile/customer-active-courses.png",
+      "gallery": "gallery/customer-active-courses.png"
+    },
+    {
+      "name": "courses",
+      "title": "คอร์สของลูกค้า",
+      "role": "owner",
+      "desktop": "desktop/courses.png",
+      "mobile": "mobile/courses.png",
+      "gallery": "gallery/courses.png"
+    },
+    {
+      "name": "sales-bill",
+      "title": "รายการขายระหว่างสร้างบิล",
+      "role": "owner",
+      "desktop": "desktop/sales-bill.png",
+      "mobile": "mobile/sales-bill.png",
+      "gallery": "gallery/sales-bill.png"
+    },
+    {
+      "name": "receipt-preview",
+      "title": "ใบเสร็จรับเงิน",
+      "role": "owner",
+      "desktop": "desktop/receipt-preview.png",
+      "mobile": "mobile/receipt-preview.png",
+      "gallery": "gallery/receipt-preview.png"
+    },
+    {
+      "name": "inventory-low-stock",
+      "title": "รายการสต็อกต่ำ",
+      "role": "owner",
+      "desktop": "desktop/inventory-low-stock.png",
+      "mobile": "mobile/inventory-low-stock.png",
+      "gallery": "gallery/inventory-low-stock.png"
+    },
+    {
+      "name": "practitioner-schedule",
+      "title": "ตารางนัดหมายเฉพาะผู้ให้บริการ",
+      "role": "practitioner",
+      "desktop": "desktop/practitioner-schedule.png",
+      "mobile": "mobile/practitioner-schedule.png",
+      "gallery": "gallery/practitioner-schedule.png"
+    }
+  ]
+}

@@ -94,5 +94,20 @@ to the server. All data must be server-authorized; never trust browser roles.
 
 ## Gallery
 
-Gallery images are generated into `docs/screenshots/gallery` by the final capture
-milestone. The capture index describes each scenario and its role.
+[Capture index](docs/screenshots/README.md) · [Exact file manifest](docs/screenshots/manifest.json) · [Delivery report and verification checklist](docs/DELIVERY.md)
+
+22 source screenshots and 11 laptop/phone compositions. All requested scenarios
+captured cleanly. Set `GALLERY_WIDTH` / `GALLERY_HEIGHT` to change composition size.
+
+![Owner dashboard, desktop and mobile](docs/screenshots/gallery/dashboard.png)
+![Week appointments calendar](docs/screenshots/gallery/appointments-week.png)
+![Booking conflict validation](docs/screenshots/gallery/booking-conflict.png)
+![Customer profile and active courses](docs/screenshots/gallery/customer-active-courses.png)
+![Mixed sales bill](docs/screenshots/gallery/sales-bill.png)
+![Thai receipt preview](docs/screenshots/gallery/receipt-preview.png)
+![Low-stock products](docs/screenshots/gallery/inventory-low-stock.png)
+![Practitioner's own schedule](docs/screenshots/gallery/practitioner-schedule.png)
+
+Additional compositions: [day appointments](docs/screenshots/gallery/appointments-day.png),
+[room calendar](docs/screenshots/gallery/appointments-room.png),
+[courses](docs/screenshots/gallery/courses.png).
