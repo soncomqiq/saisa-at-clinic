@@ -176,7 +176,7 @@ try {
   const files = scenarios.map(([name, title]) => ({
     name,
     title,
-    role: name === 'practitioner-schedule' ? 'practitioner' : 'owner',
+    role: name === 'login' ? 'login' : name === 'practitioner-schedule' ? 'practitioner' : 'owner',
     desktop: `desktop/${name}.png`,
     mobile: `mobile/${name}.png`,
     gallery: `gallery/${name}.png`,
