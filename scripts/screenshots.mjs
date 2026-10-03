@@ -11,6 +11,7 @@ const scenarios = [
   ['customer-active-courses', 'ข้อมูลลูกค้าและคอร์สที่ใช้งานได้'],
   ['customers', 'รายชื่อลูกค้า'],
   ['courses', 'คอร์สของลูกค้า'],
+  ['course-sale', 'แบบฟอร์มขายคอร์ส'],
   ['sales-bill', 'รายการขายระหว่างสร้างบิล'],
   ['receipt-preview', 'ใบเสร็จรับเงิน'],
   ['inventory-low-stock', 'รายการสต็อกต่ำ'],
@@ -132,6 +133,10 @@ try {
     await capture('customer-active-courses');
     await go('courses');
     await capture('courses');
+    await page.getByRole('button', { name: 'ขายคอร์ส', exact: true }).click();
+    await page.getByRole('button', { name: 'บันทึกการขายคอร์ส', exact: true }).waitFor();
+    await capture('course-sale');
+    await page.getByRole('button', { name: 'ปิด', exact: true }).click();
     await go('sales');
     await page.locator('.sale-item').filter({ hasText: 'ดูแลผิวหน้าเติมน้ำ' }).click();
     await page.getByRole('button', { name: 'คอร์ส', exact: true }).click();

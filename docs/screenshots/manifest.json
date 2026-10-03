@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T07:53:14.077Z",
+  "generatedAt": "2026-10-03T07:57:33.257Z",
   "desktop": {
     "width": 1440,
     "height": 900,
@@ -74,6 +74,14 @@
       "desktop": "desktop/courses.png",
       "mobile": "mobile/courses.png",
       "gallery": "gallery/courses.png"
+    },
+    {
+      "name": "course-sale",
+      "title": "แบบฟอร์มขายคอร์ส",
+      "role": "owner",
+      "desktop": "desktop/course-sale.png",
+      "mobile": "mobile/course-sale.png",
+      "gallery": "gallery/course-sale.png"
     },
     {
       "name": "sales-bill",

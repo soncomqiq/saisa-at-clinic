@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import type { ClinicData, Payment } from '../../domain/types';
 import { getService } from '../../services';
@@ -17,6 +17,7 @@ export function SellCourse({
   onSuccess: () => Promise<void>;
   customerId?: string;
 }) {
+  const formId = useId();
   const [customerId, setCustomerId] = useState(initialCustomer || data.customers[0]?.id || '');
   const [treatmentId, setTreatmentId] = useState(data.treatments[0]?.id || '');
   const [sessions, setSessions] = useState(10);
@@ -55,14 +56,29 @@ export function SellCourse({
     }
   }
   return (
-    <Modal open={open} onClose={onClose} title="ขายคอร์สใหม่">
-      <form onSubmit={submit}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="ขายคอร์ส"
+      summary={
+        <>
+          <strong>{data.customers.find((item) => item.id === customerId)?.name}</strong>
+          <span className="numeric">{money(price)}</span>
+        </>
+      }
+      footer={
+        <button className="button" form={formId} type="submit" disabled={busy}>
+          {busy ? 'กำลังบันทึก' : 'บันทึกการขายคอร์ส'}
+        </button>
+      }
+    >
+      <form id={formId} onSubmit={submit}>
         <label>
           ลูกค้า
           <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
             {data.customers.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} · {item.phone}
+                {item.name} ({item.phone})
               </option>
             ))}
           </select>
@@ -111,16 +127,13 @@ export function SellCourse({
         </label>
         <div className="list-row">
           <span>ราคาคอร์ส (ส่วนลด 15%)</span>
-          <strong>{money(price)}</strong>
+          <strong className="numeric">{money(price)}</strong>
         </div>
         {error && (
           <p className="error" role="alert">
             {error}
           </p>
         )}
-        <button className="button" disabled={busy}>
-          {busy ? 'กำลังบันทึก' : 'ยืนยันขายคอร์ส'}
-        </button>
       </form>
     </Modal>
   );
