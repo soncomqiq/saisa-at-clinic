@@ -1752,6 +1752,29 @@ a.list-row:hover {
   display: flex;
   justify-content: flex-end;
 }
+.service-group {
+  margin-top: var(--space-6);
+}
+.service-group > h2 {
+  margin-bottom: var(--space-3);
+}
+.service-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-hairline) solid var(--rule);
+  align-items: center;
+}
+.service-row strong {
+  font-weight: var(--weight-lead);
+}
+.service-row .numeric {
+  flex-shrink: 0;
+}
+.service-group .data-table :is(th, td):first-child {
+  width: 65%;
+}
 .daily-book {
   display: grid;
   grid-template-columns: var(--dashboard-tracks);

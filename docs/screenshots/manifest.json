@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T08:34:24.814Z",
+  "generatedAt": "2026-10-03T08:38:00.508Z",
   "desktop": {
     "width": 1440,
     "height": 900,
@@ -106,6 +106,14 @@
       "desktop": "desktop/inventory-low-stock.png",
       "mobile": "mobile/inventory-low-stock.png",
       "gallery": "gallery/inventory-low-stock.png"
+    },
+    {
+      "name": "treatments",
+      "title": "รายการบริการ",
+      "role": "owner",
+      "desktop": "desktop/treatments.png",
+      "mobile": "mobile/treatments.png",
+      "gallery": "gallery/treatments.png"
     },
     {
       "name": "practitioner-schedule",

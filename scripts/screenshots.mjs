@@ -15,6 +15,7 @@ const scenarios = [
   ['sales-bill', 'รายการขายระหว่างสร้างบิล'],
   ['receipt-preview', 'ใบเสร็จรับเงิน'],
   ['inventory-low-stock', 'รายการสต็อกต่ำ'],
+  ['treatments', 'รายการบริการ'],
   ['practitioner-schedule', 'ตารางนัดหมายเฉพาะผู้ให้บริการ'],
 ];
 const app = await startBrowser();
@@ -160,6 +161,8 @@ try {
     await go('inventory');
     await page.getByLabel('กรองสินค้า').selectOption('low');
     await capture('inventory-low-stock');
+    await go('treatments');
+    await capture('treatments');
     await login(page, app.url, 'practitioner');
     assert.equal(await page.locator('.calendar-column').count(), 1);
     assert.equal(await page.getByText(/฿/).count(), 0);

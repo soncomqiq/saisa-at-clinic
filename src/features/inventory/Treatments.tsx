@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Sparkles, Clock } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useClinic } from '../../services/useClinic';
 import { Empty, PageTitle, Skeleton } from '../../components/ui';
 import { money } from '../../lib/format';
@@ -14,10 +14,7 @@ export function Treatments() {
   );
   return (
     <div data-ready="true">
-      <PageTitle
-        title="รายการบริการ"
-        subtitle="ทรีตเมนต์ผิวหน้า เลเซอร์ และสปา · ดูแลอย่างใส่ใจในทุกขั้นตอน"
-      />
+      <PageTitle title="รายการบริการ" />
       <div className="toolbar">
         <div className="search">
           <Search size={17} />
@@ -41,24 +38,60 @@ export function Treatments() {
         </div>
       </div>
       {items.length ? (
-        <div className="grid-3">
-          {items.map((item) => (
-            <article className="treatment-card" key={item.id}>
-              <div className="treatment-icon">
-                <Sparkles size={22} />
+        <>
+          {[...new Set(items.map((item) => item.category))].map((group) => (
+            <section className="service-group" key={group}>
+              <h2>{group}</h2>
+              <div className="table-wrap desktop-only">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>บริการ</th>
+                      <th className="numeric">ระยะเวลา</th>
+                      <th className="numeric">ราคา</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items
+                      .filter((item) => item.category === group)
+                      .map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.name}</td>
+                          <td className="numeric">{item.duration} นาที</td>
+                          <td className="numeric">{money(item.price)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
-              <span className="badge neutral">{item.category}</span>
-              <h3>{item.name}</h3>
-              <div className="actions small muted">
-                <Clock size={15} />
-                {item.duration} นาที
+              <div className="mobile-list">
+                {items
+                  .filter((item) => item.category === group)
+                  .map((item) => (
+                    <article className="service-row" key={item.id}>
+                      <div>
+                        <strong>{item.name}</strong>
+                        <p className="small muted">{item.duration} นาที</p>
+                      </div>
+                      <span className="numeric">{money(item.price)}</span>
+                    </article>
+                  ))}
               </div>
-              <p className="price">{money(item.price)}</p>
-            </article>
+            </section>
           ))}
-        </div>
+        </>
       ) : (
-        <Empty text="ไม่พบบริการที่ค้นหา" />
+        <Empty text="ไม่พบบริการที่ตรงกับคำค้น" hint="ล้างคำค้นหรือเลือกประเภทอื่น">
+          <button
+            className="button secondary"
+            onClick={() => {
+              setSearch('');
+              setCategory('ทั้งหมด');
+            }}
+          >
+            ล้างตัวกรอง
+          </button>
+        </Empty>
       )}
     </div>
   );
