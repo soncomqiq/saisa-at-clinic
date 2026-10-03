@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import { Flower2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { Role } from '../../domain/types';
 import { roleLabels, routesFor } from '../../domain/types';
@@ -38,18 +37,13 @@ export function Login() {
       {!screenshot && (
         <div className="demo-banner">ระบบตัวอย่าง — ข้อมูลทั้งหมดเป็นข้อมูลสมมติ</div>
       )}
-      <main className="login">
+      <main className="login" data-ready="true">
         <div className="login-brand">
-          <Flower2 size={44} />
           <h1>คลินิกใสสะอาด</h1>
           <p>บิวตี้แอนด์สปา</p>
-          <div className="brand-line" />
-          <p>ความใส่ใจ เริ่มต้นในทุกวัน</p>
         </div>
         <form className="login-form" onSubmit={submit}>
-          <ShieldCheck className="accent" size={28} />
           <h2>เข้าสู่ระบบ</h2>
-          <p className="muted">คลินิกใสสะอาด บิวตี้แอนด์สปา</p>
           <label>
             บทบาท
             <select value={role} onChange={(event) => setRole(event.target.value as Role)}>
@@ -97,10 +91,7 @@ export function Login() {
               {error}
             </p>
           )}
-          <Button disabled={busy}>
-            {busy ? 'กำลังเข้าสู่ระบบ' : 'เข้าสู่ระบบ'}
-            <ArrowRight size={18} />
-          </Button>
+          <Button disabled={busy}>{busy ? 'กำลังเข้าสู่ระบบ' : 'เข้าสู่ระบบ'}</Button>
         </form>
       </main>
     </>

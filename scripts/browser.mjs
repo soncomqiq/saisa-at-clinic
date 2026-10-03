@@ -42,5 +42,6 @@ export async function login(page, url, role = 'owner', screenshot = true) {
   await page.getByLabel('บทบาท').selectOption(role);
   if (role === 'practitioner') await page.getByLabel('ผู้ให้บริการ').selectOption('s1');
   await page.getByRole('button', { name: 'เข้าสู่ระบบ', exact: true }).click();
+  await page.waitForURL(/#\/(dashboard|appointments)(?:\?|$)/);
   await ready(page);
 }

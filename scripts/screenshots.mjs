@@ -17,6 +17,7 @@ const scenarios = [
   ['inventory-low-stock', 'รายการสต็อกต่ำ'],
   ['treatments', 'รายการบริการ'],
   ['practitioner-schedule', 'ตารางนัดหมายเฉพาะผู้ให้บริการ'],
+  ['login', 'เข้าสู่ระบบ'],
 ];
 const app = await startBrowser();
 const captured = [];
@@ -167,6 +168,8 @@ try {
     assert.equal(await page.locator('.calendar-column').count(), 1);
     assert.equal(await page.getByText(/฿/).count(), 0);
     await capture('practitioner-schedule');
+    await go('login');
+    await capture('login');
     await context.close();
   }
   assert.deepEqual(errors, []);

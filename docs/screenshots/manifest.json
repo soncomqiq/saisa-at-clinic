@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T08:38:00.508Z",
+  "generatedAt": "2026-10-03T08:44:14.062Z",
   "desktop": {
     "width": 1440,
     "height": 900,
@@ -122,6 +122,14 @@
       "desktop": "desktop/practitioner-schedule.png",
       "mobile": "mobile/practitioner-schedule.png",
       "gallery": "gallery/practitioner-schedule.png"
+    },
+    {
+      "name": "login",
+      "title": "เข้าสู่ระบบ",
+      "role": "owner",
+      "desktop": "desktop/login.png",
+      "mobile": "mobile/login.png",
+      "gallery": "gallery/login.png"
     }
   ]
 }
