@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useClinic } from '../../services/useClinic';
-import { Empty, PageTitle, Skeleton } from '../../components/ui';
+import { Empty, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { money } from '../../lib/format';
 export function Treatments() {
-  const { data, error } = useClinic();
+  const { data, error, refresh } = useClinic();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('ทั้งหมด');
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const items = data.treatments.filter(
     (item) => item.name.includes(search) && (category === 'ทั้งหมด' || item.category === category),

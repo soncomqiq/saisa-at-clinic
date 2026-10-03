@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Search, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../components/context';
-import { Empty, Modal, PageTitle, Skeleton } from '../../components/ui';
+import { Empty, Modal, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { getService } from '../../services';
 import { useClinic } from '../../services/useClinic';
 import { errorMessage, thaiDate } from '../../lib/format';
@@ -18,7 +18,7 @@ export function Customers() {
   const [precaution, setPrecaution] = useState('');
   const [warning, setWarning] = useState('');
   const [busy, setBusy] = useState(false);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const items = data.customers.filter((item) => (item.name + ' ' + item.phone).includes(search));
   const visible = items.slice(page * 12, page * 12 + 12);

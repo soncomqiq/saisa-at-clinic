@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 export const cn = (...values: Parameters<typeof clsx>) => twMerge(clsx(...values));
@@ -22,11 +22,23 @@ export function Modal({
   summary?: ReactNode;
   footer?: ReactNode;
 }) {
+  const opener = useRef<HTMLElement | null>(null);
   return (
     <Dialog.Root open={open} onOpenChange={(value) => !value && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="modal-overlay" />
-        <Dialog.Content className={cn('modal', wide && 'modal-wide')} aria-describedby={undefined}>
+        <Dialog.Content
+          className={cn('modal', wide && 'modal-wide')}
+          aria-describedby={undefined}
+          onOpenAutoFocus={() => {
+            opener.current =
+              document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            if (opener.current?.isConnected) opener.current.focus();
+          }}
+        >
           <div className="modal-heading">
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Close className="icon-button" title="ปิด">
@@ -56,11 +68,22 @@ export function Confirm({
   description: string;
   actionLabel?: string;
 }) {
+  const opener = useRef<HTMLElement | null>(null);
   return (
     <AlertDialog.Root open={open} onOpenChange={(value) => !value && onClose()}>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="modal-overlay" />
-        <AlertDialog.Content className="modal confirm-modal">
+        <AlertDialog.Content
+          className="modal confirm-modal"
+          onOpenAutoFocus={() => {
+            opener.current =
+              document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            if (opener.current?.isConnected) opener.current.focus();
+          }}
+        >
           <AlertDialog.Title>{title}</AlertDialog.Title>
           <AlertDialog.Description className="muted">{description}</AlertDialog.Description>
           <div className="actions">
@@ -88,6 +111,29 @@ export function Empty({
       <p>{text}</p>
       {hint && <p>{hint}</p>}
       {children}
+    </div>
+  );
+}
+export function LoadError({ message, onRetry }: { message: string; onRetry: () => Promise<void> }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="error" role="alert">
+      <strong>โหลดข้อมูลไม่สำเร็จ</strong>
+      <p>{message}</p>
+      <button
+        className="button secondary"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            await onRetry();
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        {busy ? 'กำลังโหลด' : 'ลองใหม่'}
+      </button>
     </div>
   );
 }

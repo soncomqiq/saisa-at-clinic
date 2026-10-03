@@ -191,7 +191,14 @@ export function Calendar({
                   style={{ top: `calc(var(--calendar-hour-height) * ${index / 4})` }}
                 />
               ))}
-              {isSameDay(date,now)&&currentHour>=0&&currentHour<=10&&<div className="current-time-line" aria-label={'ขณะนี้ '+clock(now.toISOString())} style={{top:`calc(var(--calendar-hour-height) * ${currentHour})`}}/>}
+              {isSameDay(date, now) && currentHour >= 0 && currentHour <= 10 && (
+                <div
+                  className="current-time-line"
+                  role="img"
+                  aria-label={'ขณะนี้ ' + clock(now.toISOString())}
+                  style={{ top: `calc(var(--calendar-hour-height) * ${currentHour})` }}
+                />
+              )}
               {dayEvents
                 .filter((item) => matches(item, column.id))
                 .map((item) => {
@@ -210,7 +217,10 @@ export function Calendar({
       </div>
       {!dayEvents.length && (
         <div className="section">
-          <Empty text="ไม่มีนัดหมายในวันที่เลือก" hint="เลือกวันอื่น หรือจองคิวใหม่" />
+          <Empty
+            text="ไม่มีนัดหมายในวันที่เลือก"
+            hint={staffId ? 'เลือกวันอื่น' : 'เลือกวันอื่น หรือจองคิวใหม่'}
+          />
         </div>
       )}
     </>

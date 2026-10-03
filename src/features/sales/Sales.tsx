@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import type { Payment, Sale, SaleLine } from '../../domain/types';
 import { useClinic } from '../../services/useClinic';
 import { getService } from '../../services';
-import { Confirm, Empty, PageTitle, Skeleton } from '../../components/ui';
+import { Confirm, Empty, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { errorMessage, money, thaiDate } from '../../lib/format';
 import { exportExcel } from '../../lib/export';
 import { Receipt } from './Receipt';
@@ -32,7 +32,7 @@ export function Sales() {
       .catch((error) => setWarning(errorMessage(error)))
       .finally(() => setHistoryLoading(false));
   }, [customerId, data]);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const catalog = (
     kind === 'product' ? data.products.filter((item) => item.kind === 'retail') : data.treatments

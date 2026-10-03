@@ -1775,6 +1775,36 @@ a.list-row:hover {
 .service-group .data-table :is(th, td):first-child {
   width: 65%;
 }
+html [data-sonner-toaster][data-sonner-theme='light'] {
+  --normal-bg: var(--surface);
+  --normal-text: var(--ink);
+  --normal-border: var(--rule);
+  --success-bg: var(--completed-bg);
+  --success-text: var(--completed-ink);
+  --success-border: var(--rule);
+  --warning-bg: var(--arrived-bg);
+  --warning-text: var(--arrived-ink);
+  --warning-border: var(--rule);
+  --error-bg: var(--cancelled-bg);
+  --error-text: var(--cancelled-ink);
+  --error-border: var(--rule);
+  --info-bg: var(--scheduled-bg);
+  --info-text: var(--scheduled-ink);
+  --info-border: var(--rule);
+  font-family: inherit;
+  font-size: var(--text-body);
+}
+.link {
+  min-height: var(--target-size);
+  display: inline-flex;
+  align-items: center;
+}
+.page-heading > .actions:empty {
+  display: none;
+}
+.error > .button {
+  margin-top: var(--space-3);
+}
 .daily-book {
   display: grid;
   grid-template-columns: var(--dashboard-tracks);

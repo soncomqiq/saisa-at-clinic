@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Search } from 'lucide-react';
 import type { Course } from '../../domain/types';
 import { useClinic } from '../../services/useClinic';
-import { Empty, Modal, PageTitle, Skeleton } from '../../components/ui';
+import { Empty, Modal, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { thaiDate } from '../../lib/format';
 import { CourseCards, reservedSessions } from './CourseCards';
 import { SellCourse } from './SellCourse';
@@ -13,7 +13,7 @@ export function Courses() {
   const [sell, setSell] = useState(false);
   const [selected, setSelected] = useState<Course | null>(null);
   const [page, setPage] = useState(0);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const now = new Date();
   const expiry = new Date(now.getTime() + 30 * 86400000);

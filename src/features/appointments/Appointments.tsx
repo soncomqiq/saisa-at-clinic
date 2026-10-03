@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import type { Appointment, Status } from '../../domain/types';
 import { statusLabels, transitions } from '../../domain/types';
 import { useAuth } from '../../components/context';
-import { Confirm, Modal, PageTitle, Skeleton } from '../../components/ui';
+import { Confirm, Modal, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { getService } from '../../services';
 import { useClinic } from '../../services/useClinic';
 import { clock, errorMessage, localDate, thaiDate } from '../../lib/format';
@@ -22,7 +22,7 @@ export function Appointments() {
   const [warning, setWarning] = useState('');
   const [pending, setPending] = useState<Status | null>(null);
   const [busy, setBusy] = useState(false);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const practitioner = session?.role === 'practitioner';
   async function change(status: Status) {

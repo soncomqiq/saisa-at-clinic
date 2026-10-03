@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { statusLabels } from '../../domain/types';
 import { useClinic } from '../../services/useClinic';
 import { getService } from '../../services';
-import { Confirm, Empty, PageTitle, Skeleton } from '../../components/ui';
+import { Confirm, Empty, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { errorMessage, money, thaiDate } from '../../lib/format';
 import { DailyBook } from './DailyBook';
 export function Dashboard() {
@@ -23,7 +23,7 @@ export function Dashboard() {
   const [topKind, setTopKind] = useState('treatment');
   const [reset, setReset] = useState(false);
   const [busy, setBusy] = useState(false);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const now = new Date();
   const appointments = data.appointments

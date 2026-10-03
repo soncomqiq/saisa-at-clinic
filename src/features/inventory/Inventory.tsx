@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { useClinic } from '../../services/useClinic';
 import { getService } from '../../services';
 import type { Product } from '../../domain/types';
-import { Empty, Modal, PageTitle, Skeleton } from '../../components/ui';
+import { Empty, Modal, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { errorMessage, money, thaiDate } from '../../lib/format';
 import { exportExcel } from '../../lib/export';
 export function Inventory() {
@@ -19,7 +19,7 @@ export function Inventory() {
   const [reason, setReason] = useState('');
   const [warning, setWarning] = useState('');
   const [busy, setBusy] = useState(false);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const items = data.products.filter(
     (item) =>

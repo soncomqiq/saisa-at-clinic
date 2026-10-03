@@ -4,7 +4,7 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import type { Sale } from '../../domain/types';
 import { statusLabels } from '../../domain/types';
 import { useAuth } from '../../components/context';
-import { Empty, PageTitle, Skeleton } from '../../components/ui';
+import { Empty, PageTitle, Skeleton, LoadError } from '../../components/ui';
 import { getService } from '../../services';
 import { useClinic } from '../../services/useClinic';
 import { money, thaiDate, errorMessage } from '../../lib/format';
@@ -29,7 +29,7 @@ export function Profile() {
         .finally(() => setSalesLoading(false));
     }
   }, [id, session?.role, data]);
-  if (error) return <p className="error">{error}</p>;
+  if (error) return <LoadError message={error} onRetry={refresh} />;
   if (!data) return <Skeleton />;
   const customer = data.customers.find((item) => item.id === id);
   if (!customer) return <Empty text="ไม่พบลูกค้า หรือไม่มีสิทธิ์เข้าถึงข้อมูล" />;
