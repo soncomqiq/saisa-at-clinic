@@ -10,24 +10,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import {
-  CalendarDays,
-  Wallet,
-  Users,
-  Layers,
-  Plus,
-  ArrowUpRight,
-  RefreshCw,
-  AlertTriangle,
-  Clock,
-} from 'lucide-react';
+import { Plus, ArrowUpRight, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import type { Status } from '../../domain/types';
 import { statusLabels } from '../../domain/types';
 import { useClinic } from '../../services/useClinic';
 import { getService } from '../../services';
 import { Confirm, Empty, PageTitle, Skeleton } from '../../components/ui';
-import { clock, errorMessage, money, thaiDate } from '../../lib/format';
+import { errorMessage, money, thaiDate } from '../../lib/format';
+import { DailyBook } from './DailyBook';
 export function Dashboard() {
   const { data, error, refresh } = useClinic();
   const [topKind, setTopKind] = useState('treatment');
@@ -103,16 +93,7 @@ export function Dashboard() {
   }
   return (
     <div data-ready="true">
-      <PageTitle
-        title="ภาพรวมคลินิก"
-        subtitle={
-          'วัน' +
-          thaiDate(now, 'EEEE d MMM yyyy') +
-          ' · วันนี้มี ' +
-          appointments.length +
-          ' นัดหมาย'
-        }
-      >
+      <PageTitle title="ภาพรวมคลินิก" subtitle={thaiDate(now, 'EEEE d MMM yyyy')}>
         <button
           className="icon-button bordered"
           title="คืนข้อมูลตัวอย่าง"
@@ -126,47 +107,7 @@ export function Dashboard() {
           จองคิวใหม่
         </Link>
       </PageTitle>
-      <div className="dashboard-stats">
-        {[
-          {
-            title: 'รายรับวันนี้',
-            value: money(revenue),
-            note: todaySales.length + ' ใบเสร็จ',
-            icon: Wallet,
-          },
-          {
-            title: 'นัดหมายวันนี้',
-            value: appointments.length.toString(),
-            note:
-              appointments.filter((item) => item.status === 'completed').length +
-              ' นัดหมายเสร็จสิ้น',
-            icon: CalendarDays,
-          },
-          {
-            title: 'ลูกค้าทั้งหมด',
-            value: data.customers.length.toString(),
-            note: 'ใส่ใจทุกการกลับมา',
-            icon: Users,
-          },
-          {
-            title: 'คอร์สที่ใช้งานได้',
-            value: data.courses
-              .filter((item) => item.remaining > 0 && new Date(item.expiresAt) > now)
-              .length.toString(),
-            note: expiring.length + ' คอร์สใกล้หมดอายุ',
-            icon: Layers,
-          },
-        ].map((item) => (
-          <article className="stat-card" key={item.title}>
-            <div className="stat-heading">
-              <span>{item.title}</span>
-              <item.icon size={19} />
-            </div>
-            <div className="stat-number">{item.value}</div>
-            <p>{item.note}</p>
-          </article>
-        ))}
-      </div>
+      <DailyBook data={data} appointments={appointments} now={now} />
       <div className="today-statuses">
         {Object.entries(statusLabels).map(([status, label]) => (
           <div className="today-status" key={status}>
@@ -175,128 +116,98 @@ export function Dashboard() {
           </div>
         ))}
       </div>
-      <div className="dashboard-main">
-        <section className="revenue-section">
-          <div className="section-heading">
-            <h2>รายรับย้อนหลัง 6 เดือน</h2>
-            <span className="small muted">บาท</span>
-          </div>
-          <div className="chart-box">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={months} margin={{ top: 15, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#e6ede7" vertical={false} />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fill: '#8b9a8f' }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fill: '#8b9a8f' }}
-                  tickFormatter={(value) =>
-                    Number(value) >= 1000
-                      ? Math.round(Number(value) / 1000) + ' พัน'
-                      : String(value)
-                  }
-                />
-                <Tooltip
-                  formatter={(value) => [money(Number(value) * 100), 'รายรับ']}
-                  contentStyle={{
-                    border: '1px solid #dae4dc',
-                    borderRadius: 5,
-                    fontFamily: 'Sarabun',
-                    fontSize: 12,
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#6d9580"
-                  strokeWidth={2.5}
-                  fill="#e8f0eb"
-                  isAnimationActive={false}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="section-heading section">
-            <h3>บริการและคอร์สยอดนิยม</h3>
-            <div className="segmented">
-              <button
-                className={topKind === 'treatment' ? 'active' : ''}
-                onClick={() => setTopKind('treatment')}
-              >
-                บริการ
-              </button>
-              <button
-                className={topKind === 'course' ? 'active' : ''}
-                onClick={() => setTopKind('course')}
-              >
-                คอร์ส
-              </button>
+      <section className="financial-band">
+        <div className="daily-revenue">
+          <h2>รายรับวันนี้</h2>
+          <strong className="stat-number">{money(revenue)}</strong>
+          <span className="muted">{todaySales.length} ใบเสร็จ</span>
+        </div>
+        <div className="financial-grid">
+          <section className="revenue-section">
+            <div className="section-heading">
+              <h2>รายรับย้อนหลัง 6 เดือน</h2>
+              <span className="small muted">บาท</span>
             </div>
-          </div>
-          <div className="top-treatments">
-            {top.map((item, index) => (
-              <div className="top-treatment" key={item.name}>
-                <span className="rank">{String(index + 1).padStart(2, '0')}</span>
-                <div>
-                  <strong>{item.name}</strong>
-                  <div className="progress">
-                    <span
-                      style={{
-                        width: (top[0].count ? (item.count / top[0].count) * 100 : 0) + '%',
-                      }}
-                    />
-                  </div>
-                </div>
-                <span>
-                  {item.count} {topKind === 'course' ? 'คอร์ส' : 'ครั้ง'}
-                </span>
+            <div className="chart-box">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={months} margin={{ top: 15, right: 10, left: 0, bottom: 0 }}>
+                  <CartesianGrid stroke="var(--rule)" vertical={false} />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'var(--ink-muted)' }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'var(--ink-muted)' }}
+                    tickFormatter={(value) =>
+                      Number(value) >= 1000
+                        ? Math.round(Number(value) / 1000) + ' พัน'
+                        : String(value)
+                    }
+                  />
+                  <Tooltip
+                    content={({ active, payload, label }) =>
+                      active && payload?.length ? (
+                        <div className="chart-tooltip">
+                          <strong>{label}</strong>
+                          <p>รายรับ {money(Number(payload[0].value) * 100)}</p>
+                        </div>
+                      ) : null
+                    }
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="var(--clinic-jade)"
+                    strokeWidth={2.5}
+                    fill="var(--canvas)"
+                    isAnimationActive={false}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </section>
+          <section className="popular-section">
+            <div className="section-heading">
+              <h3>บริการและคอร์สยอดนิยม</h3>
+              <div className="segmented">
+                <button
+                  className={topKind === 'treatment' ? 'active' : ''}
+                  onClick={() => setTopKind('treatment')}
+                >
+                  บริการ
+                </button>
+                <button
+                  className={topKind === 'course' ? 'active' : ''}
+                  onClick={() => setTopKind('course')}
+                >
+                  คอร์ส
+                </button>
               </div>
-            ))}
-          </div>
-        </section>
-        <section className="today-section">
-          <div className="section-heading">
-            <h2>นัดหมายวันนี้</h2>
-            <Link className="icon-button" title="ดูตารางนัดหมาย" to="/appointments">
-              <ArrowUpRight size={18} />
-            </Link>
-          </div>
-          {appointments.length ? (
-            <div className="today-list">
-              {appointments.map((item) => (
-                <Link className="today-appointment" key={item.id} to="/appointments">
-                  <div className="appointment-clock">{clock(item.start)}</div>
-                  <div className="appointment-summary">
-                    <strong>
-                      {data.customers.find((customer) => customer.id === item.customerId)?.name}
-                    </strong>
-                    <p>
-                      {data.treatments.find((treatment) => treatment.id === item.treatmentId)?.name}
-                    </p>
-                    <span className={'badge ' + item.status}>
-                      {statusLabels[item.status as Status]}
-                    </span>
+            </div>
+            <div className="top-treatments">
+              {top.map((item, index) => (
+                <div className="top-treatment" key={item.name}>
+                  <span className="rank">{String(index + 1).padStart(2, '0')}</span>
+                  <div>
+                    <strong>{item.name}</strong>
                   </div>
-                </Link>
+                  <span>
+                    {item.count} {topKind === 'course' ? 'คอร์ส' : 'ครั้ง'}
+                  </span>
+                </div>
               ))}
             </div>
-          ) : (
-            <Empty text="วันนี้ยังไม่มีนัดหมาย" />
-          )}
-        </section>
-      </div>
+          </section>
+        </div>
+      </section>
       <div className="dashboard-attention">
         <section>
           <div className="section-heading">
-            <h3 className="actions">
-              <Clock size={17} />
-              คอร์สใกล้หมดอายุ
-            </h3>
+            <h3 className="actions">คอร์สใกล้หมดอายุ</h3>
             <span className="badge arrived">{expiring.length}</span>
           </div>
           <p className="small muted">ภายใน 30 วัน</p>
@@ -324,10 +235,7 @@ export function Dashboard() {
         </section>
         <section>
           <div className="section-heading">
-            <h3 className="actions">
-              <Users size={17} />
-              ลูกค้าที่ควรติดตาม
-            </h3>
+            <h3 className="actions">ลูกค้าที่ควรติดตาม</h3>
             <span className="badge neutral">{followup.length}</span>
           </div>
           <p className="small muted">มีครั้งคงเหลือ แต่ยังไม่มีนัดหมาย</p>
@@ -350,10 +258,7 @@ export function Dashboard() {
         </section>
         <section>
           <div className="section-heading">
-            <h3 className="actions">
-              <AlertTriangle size={17} />
-              สต็อกที่ต้องเติม
-            </h3>
+            <h3 className="actions">สต็อกที่ต้องเติม</h3>
             <span className="badge low">{low.length}</span>
           </div>
           <p className="small muted">ต่ำกว่าหรือเท่ากับจำนวนขั้นต่ำ</p>
