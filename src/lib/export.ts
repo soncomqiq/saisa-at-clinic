@@ -1,0 +1,2 @@
+import * as XLSX from 'xlsx';
+export function exportExcel(rows:Record<string,string|number>[],filename:string) { const workbook=XLSX.utils.book_new();const sheet=XLSX.utils.json_to_sheet(rows);sheet['!cols']=Object.keys(rows[0]||{}).map(()=>({wch:26}));XLSX.utils.book_append_sheet(workbook,sheet,'ข้อมูล');XLSX.writeFile(workbook,filename+'.xlsx'); }

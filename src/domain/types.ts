@@ -12,7 +12,7 @@ export interface Appointment { id: string; customerId: string; treatmentId: stri
 export interface SaleLine { kind: 'treatment' | 'course' | 'product'; itemId: string; name: string; quantity: number; unitPrice: number; sessions?: number; months?: number }
 export interface Sale { id: string; customerId: string; lines: SaleLine[]; payment: Payment; total: number; date: string }
 export interface StockMovement { id: string; productId: string; quantity: number; reason: string; date: string }
-export interface ClinicData { staff: Staff[]; rooms: { id: string; name: string }[]; treatments: Treatment[]; products: Product[]; customers: Customer[]; courses: Course[]; appointments: Appointment[]; sales: Sale[]; movements: StockMovement[] }
+export interface ClinicData { staff: Staff[]; rooms: { id: string; name: string }[]; treatments: Treatment[]; products: Product[]; customers: Customer[]; courses: Course[]; appointments: Appointment[]; history: Appointment[]; sales: Sale[]; movements: StockMovement[] }
 export const statusLabels: Record<Status,string> = {scheduled:'นัดแล้ว',arrived:'มาถึงแล้ว',inService:'กำลังรับบริการ',completed:'เสร็จสิ้น',cancelled:'ยกเลิก',noShow:'ไม่มาตามนัด'};
 export const transitions: Record<Status,Status[]> = {scheduled:['arrived','cancelled','noShow'],arrived:['inService','cancelled'],inService:['completed'],completed:[],cancelled:[],noShow:[]};
 export const roleLabels: Record<Role,string> = {owner:'เจ้าของ',receptionist:'พนักงานต้อนรับ',practitioner:'แพทย์/เทอราพิสต์'};
