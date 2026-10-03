@@ -1,7 +1,9 @@
 # Clinic Workspace Design
 
-**Status: approved on 2026-10-03; implementation in progress.** The user approved
-the plan. Preserve the audit below as the baseline and follow the per-page gates.
+**Status: approved and implemented on 2026-10-03.** Every redesigned page passed
+its production screenshot gate at both widths. The audit below is the historical
+baseline; original images remain in Git at commit `4e8f99f`, while the linked
+capture paths now show the approved redesign.
 
 ## 1. Intent and scope
 
@@ -496,6 +498,9 @@ Review verdict: **ready for approval, not implementation**. Main reason: the
 proposed information order follows a clinic day rather than a screenshot-friendly
 metric grid, and it fits the existing authorized data boundary.
 
+Implementation completed after approval. The original verdict above records the
+plan-stage review, not a remaining approval gate.
+
 ## 12. Implementation and verification gate (after approval only)
 
 1. Add central tokens and restyle shared primitives/shell through them.
@@ -539,3 +544,33 @@ metric grid, and it fits the existing authorized data boundary.
   stays inside the book. Focused labels are not clipped under sticky regions.
 - Static loading/reduced-motion behavior and AA contrast are verified, not inferred
   from screenshots. Existing build, lint, service and browser checks pass.
+
+## 13. Implementation results
+
+- All page changes use the central palette, Thai type scale, semantic state,
+  spacing and primitive tokens. Domain types, services, business rules and routes
+  have no diff from the approved-plan baseline.
+- Repeated KPI/cards/initials, promotional copy, middle-dot metadata, decorative
+  gradients and load animations were removed. Existing dates, prices, course
+  reservations, stock mutations and receipt generation are unchanged.
+- The production screenshot gate ran after each page. Coverage expanded from 22
+  to 30 screenshots to include customer directory, course-sale dialog, treatment
+  catalog and login; all 15 desktop/mobile pairs have gallery compositions.
+- Axe WCAG 2/2.1 A/AA checks pass for all main pages at 1440px and 390px, plus
+  the booking dialog, receipt, mobile drawer and customer empty state. Actual
+  success-toast contrast was repaired through the same status tokens.
+- Keyboard focus and focus return pass for booking dialogs/mobile drawer.
+  Reduced motion uses static loading/overlays. Sarabun numeral advances were
+  measured and are equal with tabular-numeral styling.
+- The real mobile dashboard, with the demo banner visible, shows a complete
+  appointment within the first viewport. PDF/XLSX downloads and role restrictions
+  still pass. Build, lint, 12 service tests and dependency audit pass.
+- These are automated Chromium checks and visual reviews, not a claim of full
+  accessibility certification. Safari/Firefox, assistive technology and physical
+  devices remain useful manual verification targets.
+
+Strongest service-gallery images: customer profile (precautions and session counts
+read cleanly on both devices), day calendar (real booking geometry and room/status
+context), and low stock (comparable quantities and clear movement actions).
+Dashboard is the strongest operational overview; it deliberately shows the
+appointment book rather than prioritizing a financial chart for the screenshot.

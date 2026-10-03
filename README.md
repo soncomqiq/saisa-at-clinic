@@ -27,7 +27,7 @@ Use a free port, for example `npm run dev -- --port 5187 --strictPort`.
 
 ## Features
 
-- Owner dashboard: daily revenue/statuses, six-month revenue, popular services,
+- Owner dashboard: today's appointment book and room context, daily revenue/statuses, six-month revenue, popular services,
   expiring courses, idle course customers and low-stock items.
 - Day/week practitioner calendars, room calendar, booking/edit/reschedule and
   status progression. Practitioner and room overlap/opening-hours validation.
@@ -37,17 +37,19 @@ Use a free port, for example `npm run dev -- --port 5187 --strictPort`.
 - Mixed treatment/course/product checkout, cash/transfer/card, Thai receipt
   preview and downloadable PDF. Actual XLSX exports for sales and stock.
 - Inventory receipts/issues and movement history; stock cannot go negative.
-- Mobile drawer, card lists, loading skeletons, empty states, confirmations,
+- Mobile drawer, compact ledgers, static loading skeletons, empty states, confirmations,
   toasts and screenshot mode (`?screenshot=1` before or after the hash).
 
 ## Stack and structure
 
 React 19, TypeScript, Vite, HashRouter, Tailwind CSS 4, source-owned shadcn/ui
 primitives (Radix + CVA), Recharts, lucide-react, date-fns, self-hosted Sarabun,
-ExcelJS, jsPDF/html2canvas, Vitest and Playwright.
+ExcelJS, jsPDF/html2canvas, Vitest, Playwright and axe-core accessibility checks.
 
 [Architecture](docs/ARCHITECTURE.md) defines routes, domain, service contracts,
 transactions and permissions. [Decisions](docs/DECISIONS.md) records assumptions.
+[Design system and verification](docs/DESIGN.md) defines the approved clinic-specific
+tokens, appointment-first layouts and plain Thai copy.
 UI never reads localStorage or seed data directly; all access is through services.
 Currency uses integer satang; displayed dates use Thai month names and Buddhist years.
 
@@ -96,7 +98,7 @@ to the server. All data must be server-authorized; never trust browser roles.
 
 [Capture index](docs/screenshots/README.md) · [Exact file manifest](docs/screenshots/manifest.json) · [Delivery report and verification checklist](docs/DELIVERY.md)
 
-22 source screenshots and 11 laptop/phone compositions. All requested scenarios
+30 source screenshots and 15 laptop/phone compositions. All requested scenarios
 captured cleanly. Set `GALLERY_WIDTH` / `GALLERY_HEIGHT` to change composition size.
 
 ![Owner dashboard, desktop and mobile](docs/screenshots/gallery/dashboard.png)
@@ -110,4 +112,12 @@ captured cleanly. Set `GALLERY_WIDTH` / `GALLERY_HEIGHT` to change composition s
 
 Additional compositions: [day appointments](docs/screenshots/gallery/appointments-day.png),
 [room calendar](docs/screenshots/gallery/appointments-room.png),
-[courses](docs/screenshots/gallery/courses.png).
+[courses](docs/screenshots/gallery/courses.png),
+[customer directory](docs/screenshots/gallery/customers.png),
+[course sale](docs/screenshots/gallery/course-sale.png),
+[treatments](docs/screenshots/gallery/treatments.png),
+[login](docs/screenshots/gallery/login.png).
+
+Recommended gallery leads: **customer profile**, **day appointments**, and
+**low stock**. They communicate real clinic tasks with readable quantities,
+precautions and room context on both devices. The dashboard is the best overview.

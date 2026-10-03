@@ -1,5 +1,31 @@
 # Delivery Report
 
+## Approved UI Redesign
+
+Completed on 2026-10-03 following [DESIGN.md](DESIGN.md), with small Conventional
+Commits for the shell, dashboard, appointments, customers, courses, sales,
+inventory, treatment catalog and login. Production screenshots were regenerated
+and reviewed at both widths after each page. Domain types, services, business
+rules and routes are unchanged. The historical milestone table below describes
+the initial implementation; current assets contain **30 source PNGs and 15 galleries**.
+
+Shared tokens now control the clinic-jade palette, Thai-safe Sarabun scale,
+tabular/right-aligned numbers, purpose-specific radii, flat ledger structure,
+overlay-only elevation and static loading/reduced-motion behavior. Today’s book
+and rooms lead the dashboard; financial reports remain below. Course and stock
+counts are explicit, and mobile billing has separate catalog/bill views.
+
+Verification includes axe WCAG 2/2.1 A/AA checks on all main desktop/mobile pages,
+booking/receipt dialogs, the mobile drawer and a customer empty state; keyboard
+focus/return focus; measured equal numeral advances; actual PDF/XLSX downloads;
+and a first-viewport mobile appointment with the banner visible. Build, lint,
+12 service tests and dependency audit pass. Automated checks are not full
+accessibility certification; physical-device/assistive-technology testing remains.
+
+Recommended gallery leads: **customer profile**, **day appointments**, and
+**low stock**, for clear clinical context, real appointment geometry, and
+comparable quantities/actions on both devices. Dashboard is the best overview.
+
 ## Milestones
 
 | Milestone | Delivered                                                                                                                                         |
@@ -106,6 +132,10 @@ Every row below exists in all three directories. Desktop: 1440×900. Mobile:
 | Receipt preview  | [PNG](screenshots/desktop/receipt-preview.png)         | [PNG](screenshots/mobile/receipt-preview.png)         | [PNG](screenshots/gallery/receipt-preview.png)         |
 | Low stock        | [PNG](screenshots/desktop/inventory-low-stock.png)     | [PNG](screenshots/mobile/inventory-low-stock.png)     | [PNG](screenshots/gallery/inventory-low-stock.png)     |
 | Practitioner     | [PNG](screenshots/desktop/practitioner-schedule.png)   | [PNG](screenshots/mobile/practitioner-schedule.png)   | [PNG](screenshots/gallery/practitioner-schedule.png)   |
+| Customers        | [PNG](screenshots/desktop/customers.png)               | [PNG](screenshots/mobile/customers.png)               | [PNG](screenshots/gallery/customers.png)               |
+| Course sale      | [PNG](screenshots/desktop/course-sale.png)             | [PNG](screenshots/mobile/course-sale.png)             | [PNG](screenshots/gallery/course-sale.png)             |
+| Treatments       | [PNG](screenshots/desktop/treatments.png)              | [PNG](screenshots/mobile/treatments.png)              | [PNG](screenshots/gallery/treatments.png)              |
+| Login            | [PNG](screenshots/desktop/login.png)                   | [PNG](screenshots/mobile/login.png)                   | [PNG](screenshots/gallery/login.png)                   |
 
 **Failed/unclean captures: none.** Mobile sales focuses on the in-progress bill;
 mobile warning shows the actual rejected booking with the dialog scrolled to the
