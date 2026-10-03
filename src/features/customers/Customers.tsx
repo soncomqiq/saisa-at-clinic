@@ -47,11 +47,7 @@ export function Customers() {
     <div data-ready="true">
       <PageTitle
         title="ลูกค้า"
-        subtitle={
-          session?.role === 'practitioner'
-            ? 'ลูกค้าที่มีนัดหมายกับคุณ'
-            : 'ข้อมูลลูกค้าและประวัติการดูแลทั้งหมด'
-        }
+        subtitle={session?.role === 'practitioner' ? 'ลูกค้าที่มีนัดหมายกับคุณ' : undefined}
       >
         {session?.role !== 'practitioner' && (
           <button
@@ -90,7 +86,9 @@ export function Customers() {
                   <th>ลูกค้า</th>
                   <th>เบอร์โทรศัพท์</th>
                   <th>รับบริการล่าสุด</th>
-                  {session?.role !== 'practitioner' && <th>คอร์สที่ใช้งานได้</th>}
+                  {session?.role !== 'practitioner' && (
+                    <th className="numeric">คอร์สที่ใช้งานได้</th>
+                  )}
                   <th />
                 </tr>
               </thead>
@@ -103,14 +101,15 @@ export function Customers() {
                     <tr key={item.id}>
                       <td>
                         <Link to={'/customers/' + item.id} className="actions">
-                          <div className="avatar">{item.name.slice(0, 1)}</div>
                           <strong>{item.name}</strong>
                         </Link>
                       </td>
-                      <td>{item.phone}</td>
+                      <td>
+                        <span className="numeric">{item.phone}</span>
+                      </td>
                       <td>{latest ? thaiDate(latest.start) : 'ยังไม่มีประวัติ'}</td>
                       {session?.role !== 'practitioner' && (
-                        <td>
+                        <td className="numeric">
                           {
                             data.courses.filter(
                               (course) =>
@@ -142,7 +141,6 @@ export function Customers() {
               <Link key={item.id} to={'/customers/' + item.id} className="card-row">
                 <div className="card-row-head">
                   <div className="actions">
-                    <div className="avatar">{item.name.slice(0, 1)}</div>
                     <strong>{item.name}</strong>
                   </div>
                   <ArrowUpRight size={17} />
@@ -165,7 +163,17 @@ export function Customers() {
           </div>
         </>
       ) : (
-        <Empty text="ไม่พบลูกค้าที่ค้นหา" />
+        <Empty text="ไม่พบลูกค้าที่ตรงกับคำค้น" hint="ตรวจสอบชื่อหรือเบอร์โทรศัพท์">
+          <button
+            className="button secondary"
+            onClick={() => {
+              setSearch('');
+              setPage(0);
+            }}
+          >
+            ล้างคำค้น
+          </button>
+        </Empty>
       )}
       <div className="pagination">
         <span>

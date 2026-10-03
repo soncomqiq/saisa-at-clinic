@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import type { Sale } from '../../domain/types';
 import { statusLabels } from '../../domain/types';
 import { useAuth } from '../../components/context';
@@ -43,11 +43,11 @@ export function Profile() {
   const actualTab = session?.role === 'practitioner' ? 'visits' : tab;
   return (
     <div data-ready={!salesLoading || session?.role === 'practitioner'}>
-      <Link to="/customers" className="actions small muted" style={{ marginBottom: 18 }}>
+      <Link to="/customers" className="actions small muted profile-back">
         <ArrowLeft size={16} />
         กลับไปหน้าลูกค้า
       </Link>
-      <PageTitle title={customer.name} subtitle={'รหัสลูกค้า ' + customer.id.toUpperCase()}>
+      <PageTitle title={customer.name} subtitle={'โทร ' + customer.phone}>
         {session?.role !== 'practitioner' && (
           <button className="button" onClick={() => setSell(true)}>
             <Plus size={17} />
@@ -55,32 +55,19 @@ export function Profile() {
           </button>
         )}
       </PageTitle>
-      <dl
-        className="details-grid"
-        style={{ paddingBottom: 22, borderBottom: '1px solid var(--line)' }}
-      >
-        <div>
-          <dt>เบอร์โทรศัพท์</dt>
-          <dd>{customer.phone}</dd>
-        </div>
-        <div>
-          <dt>เป็นลูกค้าตั้งแต่</dt>
-          <dd>{thaiDate(customer.createdAt)}</dd>
-        </div>
-        <div>
-          <dt>จำนวนครั้งที่รับบริการ</dt>
-          <dd>{visits.filter((item) => item.status === 'completed').length} ครั้ง</dd>
-        </div>
-      </dl>
       {session?.role !== 'receptionist' && (
-        <div className="warning-note actions section">
-          <AlertCircle size={19} />
-          <span>
-            <strong>ข้อควรระวัง</strong> · {customer.precaution || 'ไม่มีข้อควรระวังที่แจ้งไว้'}
-          </span>
+        <div
+          className={
+            customer.precaution && customer.precaution !== 'ไม่มีข้อควรระวังที่แจ้งไว้'
+              ? 'warning-note precaution-note'
+              : 'precaution-note neutral-note'
+          }
+        >
+          <strong>ข้อควรระวัง</strong>
+          <p>{customer.precaution || 'ไม่มีข้อควรระวังที่แจ้งไว้'}</p>
         </div>
       )}
-      <div className="toolbar section">
+      <div className="toolbar profile-tabs">
         <div className="segmented">
           {(session?.role === 'practitioner'
             ? [['visits', 'ประวัติการรับบริการ']]
@@ -101,7 +88,7 @@ export function Profile() {
         </div>
       </div>
       {actualTab === 'courses' ? (
-        <CourseCards courses={courses} data={data} />
+        <CourseCards courses={courses} data={data} showCustomer={false} />
       ) : actualTab === 'visits' ? (
         visits.length ? (
           <div className="panel">
@@ -112,7 +99,8 @@ export function Profile() {
                     {data.treatments.find((treatment) => treatment.id === item.treatmentId)?.name}
                   </strong>
                   <p>
-                    {thaiDate(item.start, 'd MMM yyyy HH:mm')} ·{' '}
+                    {thaiDate(item.start, 'd MMM yyyy HH:mm')}
+                    <br />
                     {data.staff.find((staff) => staff.id === item.practitionerId)?.name}
                   </p>
                 </div>
@@ -136,16 +124,34 @@ export function Profile() {
                 <div>
                   <strong>{sale.lines.map((line) => line.name).join(', ')}</strong>
                   <p>
-                    {thaiDate(sale.date)} · ใบเสร็จ {sale.id.slice(0, 8).toUpperCase()}
+                    {thaiDate(sale.date)}
+                    <br />
+                    ใบเสร็จ {sale.id.slice(0, 8).toUpperCase()}
                   </p>
                 </div>
-                <strong>{money(sale.total)}</strong>
+                <strong className="numeric">{money(sale.total)}</strong>
               </div>
             ))}
         </div>
       ) : (
         <Empty text="ยังไม่มีประวัติการซื้อ" />
       )}
+      <dl className="details-grid profile-metadata">
+        <div>
+          <dt>รหัสลูกค้า</dt>
+          <dd>{customer.id.toUpperCase()}</dd>
+        </div>
+        <div>
+          <dt>เป็นลูกค้าตั้งแต่</dt>
+          <dd>{thaiDate(customer.createdAt)}</dd>
+        </div>
+        <div>
+          <dt>รับบริการแล้ว</dt>
+          <dd className="numeric">
+            {visits.filter((item) => item.status === 'completed').length} ครั้ง
+          </dd>
+        </div>
+      </dl>
       {sell && (
         <SellCourse
           open={sell}

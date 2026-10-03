@@ -9,6 +9,7 @@ const scenarios = [
   ['appointments-room', 'ตารางห้องบริการ'],
   ['booking-conflict', 'คำเตือนเมื่อจองคิวซ้อน'],
   ['customer-active-courses', 'ข้อมูลลูกค้าและคอร์สที่ใช้งานได้'],
+  ['customers', 'รายชื่อลูกค้า'],
   ['courses', 'คอร์สของลูกค้า'],
   ['sales-bill', 'รายการขายระหว่างสร้างบิล'],
   ['receipt-preview', 'ใบเสร็จรับเงิน'],
@@ -124,6 +125,8 @@ try {
     await capture('booking-conflict');
     await page.getByRole('button', { name: 'ปิด', exact: true }).click();
 
+    await go('customers');
+    await capture('customers');
     await go('customers/c1');
     assert.ok(await page.locator('.course-card').count());
     await capture('customer-active-courses');

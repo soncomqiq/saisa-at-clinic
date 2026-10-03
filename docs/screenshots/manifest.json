@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T07:50:54.382Z",
+  "generatedAt": "2026-10-03T07:53:14.077Z",
   "desktop": {
     "width": 1440,
     "height": 900,
@@ -58,6 +58,14 @@
       "desktop": "desktop/customer-active-courses.png",
       "mobile": "mobile/customer-active-courses.png",
       "gallery": "gallery/customer-active-courses.png"
+    },
+    {
+      "name": "customers",
+      "title": "รายชื่อลูกค้า",
+      "role": "owner",
+      "desktop": "desktop/customers.png",
+      "mobile": "mobile/customers.png",
+      "gallery": "gallery/customers.png"
     },
     {
       "name": "courses",
