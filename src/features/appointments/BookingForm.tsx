@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent } from 'react';
 import { addDays, format } from 'date-fns';
 import { toast } from 'sonner';
 import type { Appointment, ClinicData } from '../../domain/types';
@@ -19,6 +19,7 @@ export function BookingForm({
   onSuccess: () => Promise<void>;
   date: Date;
 }) {
+  const formId = useId();
   const initial = appointment
     ? new Date(appointment.start)
     : initialDate < new Date()
@@ -57,7 +58,7 @@ export function BookingForm({
         },
         appointment?.id,
       );
-      toast.success(appointment ? 'เลื่อนหรือแก้ไขคิวแล้ว' : 'บันทึกนัดหมายแล้ว');
+      toast.success('บันทึกนัดหมายแล้ว');
       await onSuccess();
       onClose();
     } catch (error) {
@@ -68,8 +69,25 @@ export function BookingForm({
     }
   }
   return (
-    <Modal title={appointment ? 'แก้ไข / เลื่อนนัดหมาย' : 'จองคิวใหม่'} open onClose={onClose}>
-      <form onSubmit={submit}>
+    <Modal
+      title={appointment ? 'แก้ไขนัดหมาย' : 'จองคิวใหม่'}
+      open
+      onClose={onClose}
+      summary={
+        <>
+          <strong>{data.customers.find((item) => item.id === customerId)?.name}</strong>
+          <span>
+            {date ? thaiDate(date + 'T00:00:00') : 'เลือกวันที่'} <time>{time}</time>
+          </span>
+        </>
+      }
+      footer={
+        <button type="submit" form={formId} className="button" disabled={busy}>
+          {busy ? 'กำลังบันทึก' : 'บันทึกนัดหมาย'}
+        </button>
+      }
+    >
+      <form id={formId} onSubmit={submit}>
         <label>
           ลูกค้า
           <select
@@ -81,7 +99,7 @@ export function BookingForm({
           >
             {data.customers.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} · {item.phone}
+                {item.name} ({item.phone})
               </option>
             ))}
           </select>
@@ -97,7 +115,7 @@ export function BookingForm({
           >
             {data.treatments.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} · {item.duration} นาที
+                {item.name} ({item.duration} นาที)
               </option>
             ))}
           </select>
@@ -155,23 +173,22 @@ export function BookingForm({
             <option value="">ไม่ใช้คอร์ส / ชำระแยก</option>
             {courses.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.remaining} ครั้ง · จองไว้ {reservedSessions(data, item.id)} · หมดอายุ{' '}
+                คงเหลือ {item.remaining} ครั้ง จองไว้ {reservedSessions(data, item.id)} หมดอายุ{' '}
                 {thaiDate(item.expiresAt)}
               </option>
             ))}
           </select>
         </label>
-        <p className="small muted">
-          ใช้เวลา {treatment.duration} นาที · เปิดบริการ 10:00–20:00 · หักคอร์สเมื่อบริการเสร็จสิ้น
+        <p className="form-note">
+          ใช้เวลา {treatment.duration} นาที เปิดบริการ 10:00–20:00
+          <br />
+          หักคอร์สเมื่อจบบริการ
         </p>
         {error && (
           <p className="error" role="alert" data-testid="booking-warning">
             {error}
           </p>
         )}
-        <button className="button" disabled={busy}>
-          {busy ? 'กำลังบันทึก' : 'บันทึกนัดหมาย'}
-        </button>
       </form>
     </Modal>
   );

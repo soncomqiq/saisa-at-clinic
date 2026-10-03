@@ -11,12 +11,16 @@ export function Modal({
   onClose,
   children,
   wide = false,
+  summary,
+  footer,
 }: {
   title: string;
   open: boolean;
   onClose: () => void;
   children: ReactNode;
   wide?: boolean;
+  summary?: ReactNode;
+  footer?: ReactNode;
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={(value) => !value && onClose()}>
@@ -29,7 +33,9 @@ export function Modal({
               <X size={20} />
             </Dialog.Close>
           </div>
+          {summary && <div className="modal-summary">{summary}</div>}
           <div className="modal-body">{children}</div>
+          {footer && <div className="modal-footer">{footer}</div>}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

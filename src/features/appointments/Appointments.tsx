@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { addDays, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, CalendarDays, Pencil, ArrowUpRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Pencil, ArrowUpRight } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Appointment, Status } from '../../domain/types';
 import { statusLabels, transitions } from '../../domain/types';
@@ -45,11 +45,7 @@ export function Appointments() {
     <div data-ready="true">
       <PageTitle
         title={practitioner ? 'ตารางนัดหมายของฉัน' : 'จองคิว'}
-        subtitle={
-          practitioner
-            ? session.name + ' · ตารางบริการเฉพาะของคุณ'
-            : 'ดูแลทุกนัดหมาย ให้ทุกวันเป็นไปอย่างราบรื่น'
-        }
+        subtitle={practitioner ? session.name : undefined}
       >
         {!practitioner && (
           <button className="button" onClick={() => setBooking('new')}>
@@ -79,7 +75,6 @@ export function Appointments() {
           </button>
         </div>
         <label className="calendar-date">
-          <CalendarDays size={16} />
           <input
             aria-label="เลือกวันที่"
             type="date"
@@ -104,12 +99,6 @@ export function Appointments() {
         </div>
       </div>
       <div className="calendar-legend">
-        {['scheduled', 'arrived', 'inService', 'completed'].map((value) => (
-          <span className={'badge ' + value} key={value}>
-            <span className="status-dot" />
-            {statusLabels[value as Status]}
-          </span>
-        ))}
         <span className="small muted">{thaiDate(date, 'd MMM yyyy')}</span>
       </div>
       <Calendar
@@ -140,7 +129,7 @@ export function Appointments() {
         {selected && (
           <>
             <span className={'badge ' + selected.status}>{statusLabels[selected.status]}</span>
-            <h2 style={{ marginTop: 16 }}>
+            <h2 className="detail-customer">
               {data.customers.find((item) => item.id === selected.customerId)?.name}
             </h2>
             <p className="muted">
@@ -166,7 +155,7 @@ export function Appointments() {
               </div>
             </dl>
             {selected.courseId && (
-              <p className="small accent section">ใช้คอร์ส · หัก 1 ครั้งเมื่อเสร็จสิ้น</p>
+              <p className="small accent section">ใช้คอร์ส หัก 1 ครั้งเมื่อจบบริการ</p>
             )}
             <div className="actions section">
               <Link className="button secondary" to={'/customers/' + selected.customerId}>
@@ -182,7 +171,7 @@ export function Appointments() {
                   }}
                 >
                   <Pencil size={16} />
-                  แก้ไข / เลื่อนคิว
+                  แก้ไขนัดหมาย
                 </button>
               )}
             </div>
@@ -202,7 +191,16 @@ export function Appointments() {
                         : void change(status)
                     }
                   >
-                    {statusLabels[status]}
+                    {
+                      {
+                        arrived: 'บันทึกการมาถึง',
+                        inService: 'เริ่มบริการ',
+                        completed: 'จบบริการ',
+                        cancelled: 'ยกเลิกนัดหมาย',
+                        noShow: 'บันทึกไม่มาตามนัด',
+                        scheduled: 'นัดแล้ว',
+                      }[status]
+                    }
                   </button>
                 ))}
             </div>
@@ -219,6 +217,7 @@ export function Appointments() {
         onClose={() => setPending(null)}
         onConfirm={() => pending && void change(pending)}
         title={pending ? statusLabels[pending] : ''}
+        actionLabel={pending === 'noShow' ? 'บันทึกไม่มาตามนัด' : 'ยกเลิกนัดหมาย'}
         description="ยืนยันเปลี่ยนสถานะนัดหมาย รายการนี้จะคืนสิทธิ์การจองคอร์สและไม่สามารถย้อนกลับได้"
       />
     </div>
