@@ -4,9 +4,124 @@ import type { ClinicData, Payment } from '../../domain/types';
 import { getService } from '../../services';
 import { Modal } from '../../components/ui';
 import { errorMessage, money } from '../../lib/format';
-export function SellCourse({open,onClose,data,onSuccess,customerId:initialCustomer}:{open:boolean;onClose:()=>void;data:ClinicData;onSuccess:()=>Promise<void>;customerId?:string}) {
-  const [customerId,setCustomerId]=useState(initialCustomer||data.customers[0]?.id||'');const [treatmentId,setTreatmentId]=useState(data.treatments[0]?.id||'');const [sessions,setSessions]=useState(10);const [months,setMonths]=useState(12);const [payment,setPayment]=useState<Payment>('transfer');const [error,setError]=useState('');const [busy,setBusy]=useState(false);
-  const treatment=data.treatments.find(item=>item.id===treatmentId)!;const price=Math.round((treatment?.price||0)*sessions*.85);
-  async function submit(event:FormEvent){event.preventDefault();setBusy(true);try{await getService().checkout(customerId,[{kind:'course',itemId:treatmentId,name:treatment.name,quantity:1,unitPrice:price,sessions,months}],payment);await onSuccess();toast.success('ขายคอร์สและบันทึกการชำระเงินแล้ว');onClose();}catch(error){setError(errorMessage(error));}finally{setBusy(false);}}
-  return <Modal open={open} onClose={onClose} title="ขายคอร์สใหม่"><form onSubmit={submit}><label>ลูกค้า<select value={customerId} onChange={event=>setCustomerId(event.target.value)}>{data.customers.map(item=><option key={item.id} value={item.id}>{item.name} · {item.phone}</option>)}</select></label><label>บริการ<select value={treatmentId} onChange={event=>setTreatmentId(event.target.value)}>{data.treatments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select></label><div className="form-grid"><label>จำนวนครั้ง<input type="number" min="1" max="50" value={sessions} onChange={event=>setSessions(Number(event.target.value))} required/></label><label>อายุคอร์ส (เดือน)<input type="number" min="1" max="36" value={months} onChange={event=>setMonths(Number(event.target.value))} required/></label></div><label>วิธีชำระเงิน<select value={payment} onChange={event=>setPayment(event.target.value as Payment)}><option value="transfer">โอนเงิน</option><option value="cash">เงินสด</option><option value="card">บัตรเครดิต</option></select></label><div className="list-row"><span>ราคาคอร์ส (ส่วนลด 15%)</span><strong>{money(price)}</strong></div>{error&&<p className="error" role="alert">{error}</p>}<button className="button" disabled={busy}>{busy?'กำลังบันทึก':'ยืนยันขายคอร์ส'}</button></form></Modal>;
+export function SellCourse({
+  open,
+  onClose,
+  data,
+  onSuccess,
+  customerId: initialCustomer,
+}: {
+  open: boolean;
+  onClose: () => void;
+  data: ClinicData;
+  onSuccess: () => Promise<void>;
+  customerId?: string;
+}) {
+  const [customerId, setCustomerId] = useState(initialCustomer || data.customers[0]?.id || '');
+  const [treatmentId, setTreatmentId] = useState(data.treatments[0]?.id || '');
+  const [sessions, setSessions] = useState(10);
+  const [months, setMonths] = useState(12);
+  const [payment, setPayment] = useState<Payment>('transfer');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const treatment = data.treatments.find((item) => item.id === treatmentId)!;
+  const price = Math.round((treatment?.price || 0) * sessions * 0.85);
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    try {
+      await getService().checkout(
+        customerId,
+        [
+          {
+            kind: 'course',
+            itemId: treatmentId,
+            name: treatment.name,
+            quantity: 1,
+            unitPrice: price,
+            sessions,
+            months,
+          },
+        ],
+        payment,
+      );
+      await onSuccess();
+      toast.success('ขายคอร์สและบันทึกการชำระเงินแล้ว');
+      onClose();
+    } catch (error) {
+      setError(errorMessage(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal open={open} onClose={onClose} title="ขายคอร์สใหม่">
+      <form onSubmit={submit}>
+        <label>
+          ลูกค้า
+          <select value={customerId} onChange={(event) => setCustomerId(event.target.value)}>
+            {data.customers.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} · {item.phone}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          บริการ
+          <select value={treatmentId} onChange={(event) => setTreatmentId(event.target.value)}>
+            {data.treatments.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="form-grid">
+          <label>
+            จำนวนครั้ง
+            <input
+              type="number"
+              min="1"
+              max="50"
+              value={sessions}
+              onChange={(event) => setSessions(Number(event.target.value))}
+              required
+            />
+          </label>
+          <label>
+            อายุคอร์ส (เดือน)
+            <input
+              type="number"
+              min="1"
+              max="36"
+              value={months}
+              onChange={(event) => setMonths(Number(event.target.value))}
+              required
+            />
+          </label>
+        </div>
+        <label>
+          วิธีชำระเงิน
+          <select value={payment} onChange={(event) => setPayment(event.target.value as Payment)}>
+            <option value="transfer">โอนเงิน</option>
+            <option value="cash">เงินสด</option>
+            <option value="card">บัตรเครดิต</option>
+          </select>
+        </label>
+        <div className="list-row">
+          <span>ราคาคอร์ส (ส่วนลด 15%)</span>
+          <strong>{money(price)}</strong>
+        </div>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
+        <button className="button" disabled={busy}>
+          {busy ? 'กำลังบันทึก' : 'ยืนยันขายคอร์ส'}
+        </button>
+      </form>
+    </Modal>
+  );
 }

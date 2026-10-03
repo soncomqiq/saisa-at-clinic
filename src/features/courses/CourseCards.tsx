@@ -1,8 +1,56 @@
 import type { ClinicData, Course } from '../../domain/types';
 import { thaiDate } from '../../lib/format';
 import { Empty } from '../../components/ui';
-export const reservedSessions = (data:ClinicData,id:string) => data.appointments.filter(item=>item.courseId===id&&['scheduled','arrived','inService'].includes(item.status)).length;
-export function CourseCards({courses,data,onSelect}:{courses:Course[];data:ClinicData;onSelect?:(course:Course)=>void}) {
-  if(!courses.length)return <Empty text="ยังไม่มีคอร์สที่ใช้งานได้"/>;
-  return <div className="grid-3">{courses.map(course=>{const expired=new Date(course.expiresAt)<new Date();return <article className="course-card" key={course.id}><span className={'badge '+(expired?'low':'completed')}>{expired?'หมดอายุ':'ใช้งานได้'}</span><h3>{data.treatments.find(item=>item.id===course.treatmentId)?.name}</h3><p className="small muted">{data.customers.find(item=>item.id===course.customerId)?.name}</p><p className="stat-number">{course.remaining}<span className="small muted"> / {course.total} ครั้ง</span></p><div className="progress"><span style={{width:course.remaining/course.total*100+'%'}}/></div><p className="small muted" style={{marginTop:12}}>จองไว้ {reservedSessions(data,course.id)} ครั้ง · หมดอายุ {thaiDate(course.expiresAt)}</p>{onSelect&&<button className="link small" style={{marginTop:12}} onClick={()=>onSelect(course)}>ดูประวัติการใช้</button>}</article>;})}</div>;
+export const reservedSessions = (data: ClinicData, id: string) =>
+  data.appointments.filter(
+    (item) => item.courseId === id && ['scheduled', 'arrived', 'inService'].includes(item.status),
+  ).length;
+export function CourseCards({
+  courses,
+  data,
+  onSelect,
+}: {
+  courses: Course[];
+  data: ClinicData;
+  onSelect?: (course: Course) => void;
+}) {
+  if (!courses.length) return <Empty text="ยังไม่มีคอร์สที่ใช้งานได้" />;
+  return (
+    <div className="grid-3">
+      {courses.map((course) => {
+        const expired = new Date(course.expiresAt) < new Date();
+        return (
+          <article className="course-card" key={course.id}>
+            <span className={'badge ' + (expired ? 'low' : 'completed')}>
+              {expired ? 'หมดอายุ' : 'ใช้งานได้'}
+            </span>
+            <h3>{data.treatments.find((item) => item.id === course.treatmentId)?.name}</h3>
+            <p className="small muted">
+              {data.customers.find((item) => item.id === course.customerId)?.name}
+            </p>
+            <p className="stat-number">
+              {course.remaining}
+              <span className="small muted"> / {course.total} ครั้ง</span>
+            </p>
+            <div className="progress">
+              <span style={{ width: (course.remaining / course.total) * 100 + '%' }} />
+            </div>
+            <p className="small muted" style={{ marginTop: 12 }}>
+              จองไว้ {reservedSessions(data, course.id)} ครั้ง · หมดอายุ{' '}
+              {thaiDate(course.expiresAt)}
+            </p>
+            {onSelect && (
+              <button
+                className="link small"
+                style={{ marginTop: 12 }}
+                onClick={() => onSelect(course)}
+              >
+                ดูประวัติการใช้
+              </button>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  );
 }

@@ -9,3 +9,4 @@
 7. Thai receipt is a rasterized PDF for reliable glyph rendering; it is a demo receipt, not a tax invoice.
 8. Week view has practitioner columns inside each day; room view has four room columns for a selected day. Mobile calendars scroll horizontally with a visible date control.
 9. Persist edits for the current local day; on the next day regenerate the dated demo fixtures so the public demo never becomes stale. This daily reset is documented in README.
+10. Architecture deviation: replace npm SheetJS with dynamically loaded ExcelJS because SheetJS's npm release has unpatched advisories. Upgrade jsPDF and Vitest to patched versions.

@@ -1,6 +1,7 @@
 # Architecture
 
 ## Product and structure
+
 Frontend-only Thai clinic demo. React, TypeScript, Vite, Tailwind, shadcn-style
 Radix primitives, lucide-react, Recharts, date-fns, React Router HashRouter.
 Vite base is `/beauty-clinic/`. All displayed business data is fictional.
@@ -17,11 +18,13 @@ docs/screenshots/       desktop, mobile, gallery
 ```
 
 ## Routes
+
 `/login`, `/dashboard`, `/appointments`, `/customers`, `/customers/:id`,
 `/courses`, `/sales`, `/inventory`, `/treatments`. Unauthorized routes redirect
 to the role's first allowed page. Practitioner starts at appointments.
 
 ## Domain
+
 Role: owner, receptionist, practitioner. Staff: two doctors, three therapists,
 two receptionists. Four rooms. Treatment: category, duration minutes, price,
 consumables (product and quantity). Product: retail/consumable, stock, minimum,
@@ -33,6 +36,7 @@ total, timestamp. Stock movement: product, signed quantity, reason, timestamp.
 Session: role, staff id, display name. Money is integer satang internally.
 
 ## Services and persistence
+
 `ClinicService` supplies login/logout/session, a role-filtered snapshot, booking,
 rescheduling/editing, status transitions, course sale, checkout, customer creation,
 stock movements, per-customer receipt lookup, and reset. Reception receives retail
@@ -54,6 +58,7 @@ repeat authorization, interval exclusion, course reservation, stock constraints,
 and idempotent completion. Do not treat fake auth as production security.
 
 ## Rules
+
 - Open daily 10:00–20:00. Duration comes from treatment, end must fit opening.
 - Active bookings cannot overlap either practitioner or room (half-open intervals).
 - Only scheduled -> arrived/cancelled/no-show; arrived -> in-service/cancelled;
@@ -67,32 +72,36 @@ and idempotent completion. Do not treat fake auth as production security.
 - Errors carry Thai explanations and UI displays them inline and in toasts.
 
 ## Permission matrix
-| Page/action | Owner | Reception | Practitioner |
-|---|---|---|---|
-| Dashboard/revenue | all | no | no |
-| Appointments | manage all | manage all | own only, advance own status |
-| Customers | all + precautions | manage, no precautions | booked customers, history + precautions |
-| Courses | sell/read | sell/read | no |
-| Sales/PDF/export | all | all | no |
-| Inventory/movements/export | all | no | no |
-| Treatments/catalog prices | all | read | no |
-| Reset demo | yes | no | no |
+
+| Page/action                | Owner             | Reception              | Practitioner                            |
+| -------------------------- | ----------------- | ---------------------- | --------------------------------------- |
+| Dashboard/revenue          | all               | no                     | no                                      |
+| Appointments               | manage all        | manage all             | own only, advance own status            |
+| Customers                  | all + precautions | manage, no precautions | booked customers, history + precautions |
+| Courses                    | sell/read         | sell/read              | no                                      |
+| Sales/PDF/export           | all               | all                    | no                                      |
+| Inventory/movements/export | all               | no                     | no                                      |
+| Treatments/catalog prices  | all               | read                   | no                                      |
+| Reset demo                 | yes               | no                     | no                                      |
 
 Practitioner customer history excludes purchases and financial data. Permissions
 are enforced by both routes and service mutations, not merely hidden controls.
 
 ## UI and libraries
+
 Light sage accent with white surfaces, charcoal type, semantic amber/red/blue
 status accents. Thai Sarabun typography, stable calendar grids, mobile card lists
 and drawer. Radix Dialog and AlertDialog provide accessible shadcn-style modal
 primitives; Sonner toasts. Recharts for revenue. date-fns for calendar arithmetic.
-SheetJS generates actual XLSX. Thai receipt PDF is generated from a receipt DOM
+ExcelJS generates actual XLSX (replaced SheetJS after dependency advisory review).
+Thai receipt PDF is generated from a receipt DOM
 with html2canvas + jsPDF, preserving Thai glyphs without relying on PDF core fonts.
 Receipt stays available as an in-app preview. Playwright waits for explicit ready
 state and fonts before screenshots, including receipt and validation warning.
 Vitest tests service contracts. Production build and lint gate every milestone.
 
 ## Delivery
+
 GitHub Actions builds and deploys dist to Pages. Capture script builds and starts
 Vite preview under the correct base, resets each isolated browser context, and
 captures desktop/mobile scenarios. Gallery script renders paired PNGs in an HTML

@@ -1,4 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-export default defineConfig({ base: '/beauty-clinic/', plugins: [react(), tailwindcss()] });
+import { fileURLToPath, URL } from 'node:url';
+export default defineConfig({
+  base: '/beauty-clinic/',
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  plugins: [react(), tailwindcss()],
+});
